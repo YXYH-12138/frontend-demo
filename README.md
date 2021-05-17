@@ -1,4 +1,4 @@
-# my-element
+# swui
 
 ## Project setup
 ```

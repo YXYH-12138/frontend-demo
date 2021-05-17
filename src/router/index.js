@@ -6,15 +6,8 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      redirect: '/cascader',
+      redirect: '/containar-scroll',
       path: '/',
-    },
-    {
-      component: () => import('../example/ex-cascader.vue'),
-      path: '/cascader',
-      meta: {
-        title: '级联组件'
-      }
     },
     {
       component: () => import('../example/ex-containar-scroll.vue'),
