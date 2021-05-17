@@ -1,10 +1,10 @@
-const requireComponent = require.context('./', true, /index\.vue$/)
+const req = require.context('./', true, /index\.vue$/)
+const Vue = require('vue')
 
-const obj = {}
+req.keys().forEach((item) => {
+  const component = req(item)
+  Vue.default.component(component.default.name, component.default)
+});
 
-requireComponent.keys().forEach(item => {
-  const component = requireComponent(item)
-  obj[component.default.name] = component.default
-})
 
-export default obj
+

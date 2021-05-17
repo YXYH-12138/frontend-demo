@@ -2,9 +2,9 @@
   <div id="app">
     <el-container>
       <el-aside width="200px">
-        <el-menu router @select="select" :default-active="active">
+        <!-- <el-menu router @select="select" :default-active="active">
           <menu-list :menuList="menuList" />
-        </el-menu>
+        </el-menu> -->
       </el-aside>
       <el-main>
         <router-view />

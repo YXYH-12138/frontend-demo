@@ -1,0 +1,31 @@
+// 主题颜色
+@theme-color: rgb(8, 90, 189);
+// 背景颜色
+@bg-main-color :rgb(241, 236, 236);
+// 头部高度
+@header-height: 92px;
+// menu选中背景颜色
+@menu-selected: rgb(20, 161, 153);
+// 折叠背景
+@collapse-bg-color: #fff;
+
+#library() {
+  .text-hidden() {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .flex-center() {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .radius(@top: 0; @right: 0; @bottom: 0; @left: 0) {
+    border-top-left-radius: @top;
+    border-bottom-left-radius: @left;
+    border-top-right-radius: @right;
+    border-bottom-right-radius: @bottom;
+  }
+}
