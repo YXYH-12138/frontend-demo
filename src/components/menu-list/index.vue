@@ -3,25 +3,25 @@ export default {
   name: "MenuList",
   inheritAttrs: false,
   props: {
-    list: Array,
+    menus: {
+      type: Array,
+      required: true,
+    },
     router: Boolean,
   },
   methods: {
-    createMenuItem(data, deep) {
-      return data.map((item, index) => {
-        if (item.hidden) return null;
-        const _deep = deep ? deep + "-" : "";
+    createMenuItem(data) {
+      return data.map((item) => {
+        if (item.hidden || item.redirect) return null;
         return item.children && item.children.length > 0 ? (
-          // key={"sub-" + _deep + index}
           <el-submenu key={item.path} index={item.path.toLowerCase()}>
             <span slot="title">
               {item.icon && <i class={item.icon} />}
               <span>{item.meta.title}</span>
             </span>
-            {this.createMenuItem(item.children, _deep + index)}
+            {this.createMenuItem(item.children)}
           </el-submenu>
         ) : (
-          //  key={_deep + index}
           <el-menu-item
             index={(item.path[0] === "/"
               ? item.path
@@ -50,7 +50,7 @@ export default {
         {...{ on: this.$listeners }}
         onSelect={this.handleClick}
       >
-        {this.createMenuItem(this.list)}
+        {this.createMenuItem(this.menus)}
       </el-menu>
     );
   },
@@ -60,11 +60,10 @@ export default {
 <style lang="less" scoped>
 #library();
 .menu-list {
-  max-height: calc(100vh - @header-height);
+  height: 100%;
   li {
     .text-hidden();
     font-size: 16px;
-    // text-align: center;
   }
 }
 /deep/ .el-submenu__title {

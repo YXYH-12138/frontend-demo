@@ -28,6 +28,7 @@
 
 <script>
 export default {
+  name: "ContainarScroll-滚动容器",
   data() {
     return {
       list: [],
