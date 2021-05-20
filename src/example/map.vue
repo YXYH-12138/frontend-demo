@@ -1,6 +1,28 @@
 <template>
   <div class="evaluate-page">
-    <div id="evaluate-map"></div>
+    <!-- 外层组件，会向子组件注入map对象 -->
+    <Layer :config="mapConfig">
+      <!-- 底图 -->
+      <BaseMap
+        type="wms"
+        url="http://121.40.117.96:9090/geoserver/hunan/wms"
+        :config="{
+          layers: 'hunangroup',
+          format: 'image/png',
+          transparent: true,
+        }"
+      />
+      <!-- 标注 -->
+      <LayerMarker
+        @popupopen="popupopen"
+        :marker="[28.23, 112.93]"
+        :icon="getIcon"
+        content="<video width='280px' height='140px' class='player' controls></video>"
+        :popupOptions="{ offset: [0, -8] }"
+      />
+      <!-- 标注 -->
+      <LayerMarker :marker="[28.03, 113.22]" :icon="getIcon" />
+    </Layer>
   </div>
 </template>
 
@@ -13,10 +35,6 @@ export default {
       map: null,
       marker: null,
       load: false,
-      headerList: [
-        { title: "水源地", icon: "icon-shuiyuandi" },
-        { title: "水资源", icon: "icon-huabanfuben" },
-      ],
       player: null,
       markerInfo: [
         {
@@ -36,94 +54,64 @@ export default {
         },
       ],
       group: {},
-    };
-  },
-  methods: {
-    initMap() {
-      const detail = this.$L.tileLayer.wms(
-        "http://121.40.117.96:9090/geoserver/hunan/wms",
-        {
-          layers: "hunangroup",
-          format: "image/png",
-          transparent: true,
-        }
-      );
-      const map = this.$L.map("evaluate-map", {
+      mapConfig: {
         zoom: 8,
         minZoom: 6,
         maxZoom: 16,
         center: [27.658, 112.19],
         zoomControl: false,
         attributionControl: false,
-        layers: [detail],
-      });
-      this.map = map;
-    },
-    getIcon(text) {
-      let cur = this.markerInfo.find((item) => item.text === text);
-      cur.count++;
-      return this.$L.icon({
-        iconUrl: cur.img,
-        iconSize: [28, 32],
-        iconAnchor: [12, 36],
-        popupAnchor: [-3, -76],
-      });
-    },
-    createMarker(data) {
-      const coordinates = data.map((item) => [item.latitude, item.longitude]);
-      if (!coordinates.length) return;
-      const group = {};
-      coordinates.forEach((item, index) => {
-        const text = data[index].text;
-        if (!text) return;
-        const marker = this.$L.marker([item[0], item[1]], {
-          icon: this.getIcon(text),
-        });
-        (group[text] || (group[text] = [])).push(marker);
-        const content =
-          '<video width="280px" height="140px" class="player"  controls></video>';
-        marker.bindPopup(content, {
-          offset: this.$L.point(5, 50),
-        });
-        marker.on("popupopen", () => {
-          if (flvjs.isSupported()) {
-            let video = document.querySelector(".player");
-            if (video) {
-              this.player = flvjs.createPlayer({
-                type: "flv",
-                isLive: true,
-                url: `ws://121.40.117.96:6100/rtsp`,
-              });
-              this.player.attachMediaElement(video);
-              this.player.load();
-              this.player.play();
-            }
-          }
-        });
-      });
-      this.addLayerGroup(group);
-    },
-    addLayerGroup(group) {
-      const obj = {};
-      for (const key in group) {
-        const layerGroup = this.$L.layerGroup(group[key]).addTo(this.map);
-        obj[key] = layerGroup;
-      }
-      this.group = obj;
-    },
-  },
-  mounted() {
-    this.initMap();
-    this.createMarker([
-      {
-        latitude: 28.23,
-        longitude: 112.93,
-        text: "重要饮水水源地",
       },
-    ]);
+      markerData: [28.23, 112.93],
+    };
+  },
+  methods: {
+    getIcon(icon) {
+      return icon({
+        iconUrl: require("@/assets/img/map-marker-main.png"),
+        iconSize: [28, 32],
+      });
+    },
+    popupopen() {
+      if (flvjs.isSupported()) {
+        let video = document.querySelector(".player");
+        if (video) {
+          this.player = flvjs.createPlayer({
+            type: "flv",
+            isLive: true,
+            url: `ws://121.40.117.96:6100/rtsp`,
+          });
+          this.player.attachMediaElement(video);
+          this.player.load();
+          this.player.play();
+        }
+      }
+    },
+    createMarker() {
+      // const coordinates = data.map((item) => [item.latitude, item.longitude]);
+      // if (!coordinates.length) return;
+      // const group = {};
+      // coordinates.forEach((item, index) => {
+      //   const text = data[index].text;
+      //   if (!text) return;
+      //   const marker = this.$L.marker([item[0], item[1]], {
+      //     icon: this.getIcon(text),
+      //   });
+      //   (group[text] || (group[text] = [])).push(marker);
+      // });
+      // this.addLayerGroup(group);
+    },
+    addLayerGroup() {
+      // const obj = {};
+      // for (const key in group) {
+      //   const layerGroup = this.$L.layerGroup(group[key]).addTo(this.map);
+      //   obj[key] = layerGroup;
+      // }
+      // this.group = obj;
+    },
   },
   beforeDestroy() {
-    this.player.destory();
+    this.player && this.player.destory();
   },
 };
 </script>
@@ -131,10 +119,6 @@ export default {
 <style lang="less" scoped>
 .player {
   width: 100%;
-}
-#evaluate-map {
-  flex: 1;
-  z-index: 1;
 }
 .evaluate-page {
   height: 100%;

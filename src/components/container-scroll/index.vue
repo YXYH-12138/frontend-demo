@@ -46,7 +46,7 @@ export default {
       type: Boolean,
       default: true,
     },
-    // 按钮点击的偏移
+    // 按钮点击滑动的偏移
     offset: {
       type: Number,
       default: 240,

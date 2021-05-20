@@ -11,7 +11,6 @@
 import G6 from "@antv/g6";
 
 export default {
-  name: "FlowChart-流程图",
   mounted() {
     this.initSelfEdge();
     // this.initSelfNode();

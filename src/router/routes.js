@@ -2,6 +2,7 @@ import components from "./components"
 
 const exampleRouter = [];
 
+// 路由自动注册
 const req = require.context('@/example', false, /\.vue$/)
 req.keys().forEach(fileName => {
   const reg = /^\.\/(.+)\.vue$/.exec(fileName)

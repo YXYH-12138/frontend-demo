@@ -59,7 +59,7 @@ export default {
     }
   }
   .scroll {
-    width: calc(100% - 60px);
+    width: calc(100% - 40px);
   }
   .icon {
     font-size: 18px;

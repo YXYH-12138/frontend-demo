@@ -1,6 +1,5 @@
 <template>
   <div class="layout-page">
-    <!-- <home-header /> -->
     <section class="layout-content">
       <router-view />
     </section>

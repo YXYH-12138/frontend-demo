@@ -30,7 +30,11 @@ export default {
   display: flex;
   .wrap-right {
     flex: 1;
+    // display: flex;
     overflow: hidden;
+    // & > * {
+    //   flex: 1;
+    // }
   }
 }
 </style>

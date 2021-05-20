@@ -1,5 +1,7 @@
-const req = require.context('./', true, /index\.vue$/)
+const req = require.context('./', true, /.vue$/)
 const Vue = require('vue')
+
+// const blackList = ['']
 
 req.keys().forEach((item) => {
   const component = req(item)
