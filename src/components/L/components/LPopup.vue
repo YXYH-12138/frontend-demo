@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, PropType, inject, shallowRef, onMounted } from "vue-demi";
-import { layerKey } from "./context";
+import { layerKey } from "../context";
 import { point } from "leaflet";
 import type { Content, PopupOptions, Point } from "leaflet";
 

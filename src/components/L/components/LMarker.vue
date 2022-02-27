@@ -2,7 +2,7 @@
 import { defineComponent, PropType, inject } from "vue-demi";
 import * as L from "leaflet";
 import { layerProps, layerEmits, layerSetup } from "../functions/layer";
-import { layerGroupMethodsKey } from "./context";
+import { flyContextKey, flyKey, layerGroupMethodsKey } from "../context";
 
 export default defineComponent({
   props: {
@@ -17,8 +17,20 @@ export default defineComponent({
   },
   emits: { ...layerEmits },
   setup(props, context) {
-    const marker = L.marker(props.latLng as L.LatLng, props.options);
     const methods = inject(layerGroupMethodsKey);
+    const { markerMap } = inject(flyContextKey)!;
+    const flyName = inject(flyKey);
+
+    const marker = L.marker(props.latLng as L.LatLng, {
+      zIndexOffset: props.zIndex || 0,
+      ...props.options,
+      params: { flyName }
+    });
+
+    if (flyName) {
+      const current = markerMap.get(flyName)!;
+      current.push(marker);
+    }
 
     layerSetup(props, context, marker, methods);
   }

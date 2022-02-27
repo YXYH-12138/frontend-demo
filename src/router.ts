@@ -10,7 +10,7 @@ export const routes: RouteRecordRaw[] = [
     name: "leflet",
     path: "/leaflet",
     meta: { title: "leflet" },
-    component: () => import("@/example/leaflet.vue")
+    component: () => import("@/example/leaflet/index.vue")
   }
 ];
 

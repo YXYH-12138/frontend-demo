@@ -1,9 +1,9 @@
 import { inject, watch, toRef, provide } from "vue-demi";
 import * as L from "leaflet";
-import { layerMethodsKey, layerKey, mapContextKey } from "../components/context";
+import { layerMethodsKey, layerKey, mapContextKey, flyContextKey, flyKey } from "../context";
 import { remapEvents, propsBinder } from "../utils";
 import type { SetupContext, ExtractPropTypes } from "vue-demi";
-import type { LayerMethods } from "../components/context";
+import type { LayerMethods } from "../context";
 
 export type LayerEmites = {
   "update:visible": (value: boolean) => void;
@@ -46,7 +46,9 @@ export const layerSetup: SetUp<typeof layerProps, typeof layerEmits> = (
   layerMethods
 ) => {
   const methods = layerMethods || inject(layerMethodsKey)!;
-  const { events } = inject(mapContextKey)!;
+  const { events: mapEvents } = inject(mapContextKey)!;
+  const { events: flyEvents } = inject(flyContextKey)!;
+  const flyName = inject(flyKey);
 
   const visible = toRef(props, "visible");
 
@@ -60,6 +62,7 @@ export const layerSetup: SetUp<typeof layerProps, typeof layerEmits> = (
   watch(visible, (val) => {
     methods.setVisible(layer, val);
     context.emit("update:visible", val);
-    events.emit("layerVisible", { layer, visible: visible.value });
+    mapEvents.emit("layerVisible", { layer, visible: visible.value, name: flyName });
+    !val && flyName && flyEvents.emit("layerHidden", { name: flyName });
   });
 };

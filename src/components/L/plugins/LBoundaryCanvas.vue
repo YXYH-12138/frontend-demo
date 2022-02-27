@@ -2,7 +2,7 @@
 import { defineComponent, onMounted, inject } from "vue-demi";
 import * as L from "leaflet";
 import { layerProps, layerEmits, layerSetup } from "../functions/layer";
-import { layerKey } from "../components/context";
+import { layerKey } from "../context";
 
 export default defineComponent({
   props: {

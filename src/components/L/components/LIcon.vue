@@ -11,7 +11,7 @@ import {
 } from "vue-demi";
 import * as L from "leaflet";
 import { propsBinder } from "../utils";
-import { layerKey } from "./context";
+import { layerKey } from "../context";
 
 export default defineComponent({
   props: {

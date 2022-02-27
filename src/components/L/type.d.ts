@@ -1,8 +1,13 @@
-export type Events = {
+export type MapEvents = {
   // 地图初始化完成
   ready: L.Map;
   // 图层切换
-  layerVisible: { layer: L.Layer; visible: boolean };
+  layerVisible: { layer: L.Layer; visible: boolean; name?: string };
+  "*": void;
+};
+
+export type FlyEvents = {
+  layerHidden: { name: string };
   "*": void;
 };
 
