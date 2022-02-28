@@ -1,17 +1,10 @@
 <script lang="ts" setup>
+import { markRaw, nextTick, onBeforeUnmount, onMounted, provide, ref, useAttrs } from "vue-demi";
 import * as L from "leaflet";
 import mitt from "mitt";
 import { remapEvents, propsBinder, resetWebpackIcon } from "../utils";
-import { markRaw, nextTick, onBeforeUnmount, onMounted, provide, ref, useAttrs } from "vue-demi";
-import {
-  mapContextKey,
-  MapContext,
-  layerMethodsKey,
-  layerGroupMethodsKey,
-  flyContextKey,
-  flyKey
-} from "../context";
-import { FlyEvents } from "../type";
+import { mapContextKey, layerMethodsKey, flyContextKey, flyKey } from "../context";
+import type { FlyEvents, MapContext } from "../type";
 
 type Props = { crs?: L.CRS; options?: L.MapOptions; zIndex?: number };
 type Emits = {
@@ -51,8 +44,6 @@ const methods = {
 
 provide(mapContextKey, context);
 provide(layerMethodsKey, methods);
-provide(layerGroupMethodsKey, methods);
-
 provide(flyKey, "");
 provide(flyContextKey, { events: mitt<FlyEvents>(), markerMap: new Map() });
 

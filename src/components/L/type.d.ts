@@ -1,3 +1,5 @@
+import type { Emitter } from "mitt";
+
 export type MapEvents = {
   // 地图初始化完成
   ready: L.Map;
@@ -9,6 +11,11 @@ export type MapEvents = {
 export type FlyEvents = {
   layerHidden: { name: string };
   "*": void;
+};
+
+export type MapContext = {
+  map?: L.Map;
+  events: Emitter<MapEvents>;
 };
 
 // 底图

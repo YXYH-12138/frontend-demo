@@ -2,7 +2,7 @@
 import { defineComponent, inject, PropType, provide } from "vue-demi";
 import * as L from "leaflet";
 import { layerProps, layerEmits, layerSetup } from "../functions/layer";
-import { layerMethodsKey, layerGroupMethodsKey } from "../context";
+import { layerMethodsKey } from "../context";
 
 export default defineComponent({
   props: { ...layerProps, layers: Array as PropType<L.Layer[]> },
@@ -24,7 +24,7 @@ export default defineComponent({
       }
     };
 
-    provide(layerGroupMethodsKey, { ...layerMethods, ...groupMethods });
+    provide(layerMethodsKey, { ...layerMethods, ...groupMethods });
 
     layerSetup(props, context, layerGroup);
   }

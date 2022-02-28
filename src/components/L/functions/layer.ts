@@ -3,7 +3,6 @@ import * as L from "leaflet";
 import { layerMethodsKey, layerKey, mapContextKey, flyContextKey, flyKey } from "../context";
 import { remapEvents, propsBinder } from "../utils";
 import type { SetupContext, ExtractPropTypes } from "vue-demi";
-import type { LayerMethods } from "../context";
 
 export type LayerEmites = {
   "update:visible": (value: boolean) => void;
@@ -35,17 +34,11 @@ export const layerEmits = {
 type SetUp<P, E> = (
   props: Readonly<ExtractPropTypes<P>>,
   ctx: SetupContext<E>,
-  layer: L.Layer,
-  layerMethods?: LayerMethods
+  layer: L.Layer
 ) => void;
 
-export const layerSetup: SetUp<typeof layerProps, typeof layerEmits> = (
-  props,
-  context,
-  layer,
-  layerMethods
-) => {
-  const methods = layerMethods || inject(layerMethodsKey)!;
+export const layerSetup: SetUp<typeof layerProps, typeof layerEmits> = (props, context, layer) => {
+  const methods = inject(layerMethodsKey)!;
   const { events: mapEvents } = inject(mapContextKey)!;
   const { events: flyEvents } = inject(flyContextKey)!;
   const flyName = inject(flyKey);
