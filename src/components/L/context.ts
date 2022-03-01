@@ -1,6 +1,6 @@
 import { InjectionKey } from "vue";
 import type { Emitter } from "mitt";
-import type { MapContext, FlyEvents } from "./type";
+import type { MapContext, FlyEvents, IconDefaultUrl } from "./type";
 
 export type LayerMethods = {
   addLayer: <T extends L.Layer>(layer: T) => void;
@@ -13,6 +13,8 @@ export const flyContextKey: InjectionKey<{
   events: Emitter<FlyEvents>;
   markerMap: Map<string, L.Marker[]>;
 }> = Symbol();
+
+export const iconUrlKey: InjectionKey<IconDefaultUrl> = Symbol();
 
 export const layerMethodsKey: InjectionKey<LayerMethods> = Symbol();
 

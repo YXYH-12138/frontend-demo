@@ -18,20 +18,4 @@ export type MapContext = {
   events: Emitter<MapEvents>;
 };
 
-// 底图
-export type MapBaseType =
-  | "Terrain" // 地形图
-  | "Satellite" //卫星图
-  | "Normal"; //矢量底图
-
-// geojson图层服务
-export interface WFSParams {
-  service: string;
-  version: string;
-  request: string;
-  typeName: string;
-  outputFormat: string;
-  CQL_FILTER: string;
-  TYPE: number;
-  url?: string;
-}
+export type IconDefaultUrl = Partial<Record<"iconRetinaUrl" | "iconUrl" | "shadowUrl", string>>;

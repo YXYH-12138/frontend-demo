@@ -1,9 +1,18 @@
 <script lang="ts" setup>
-import { markRaw, nextTick, onBeforeUnmount, onMounted, provide, ref, useAttrs } from "vue-demi";
+import {
+  inject,
+  markRaw,
+  nextTick,
+  onBeforeUnmount,
+  onMounted,
+  provide,
+  ref,
+  useAttrs
+} from "vue-demi";
 import * as L from "leaflet";
 import mitt from "mitt";
 import { remapEvents, propsBinder, resetWebpackIcon } from "../utils";
-import { mapContextKey, layerMethodsKey, flyContextKey, flyKey } from "../context";
+import { mapContextKey, layerMethodsKey, flyContextKey, flyKey, iconUrlKey } from "../context";
 import type { FlyEvents, MapContext } from "../type";
 
 type Props = { crs?: L.CRS; options?: L.MapOptions; zIndex?: number };
@@ -18,12 +27,13 @@ const props = withDefaults(defineProps<Props>(), {
 const emits = defineEmits<Emits>();
 
 const attrs = useAttrs();
+const iconDefault = inject(iconUrlKey);
 
 const context: MapContext = { events: mitt() };
 const rootEl = ref<HTMLElement>();
 const ready = ref(false);
 
-resetWebpackIcon(L.Icon);
+resetWebpackIcon(L.Icon, iconDefault);
 
 const methods = {
   addLayer<T extends L.Layer>(layer: T) {

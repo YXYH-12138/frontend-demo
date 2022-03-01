@@ -4,6 +4,10 @@ import { TileLayerOptions } from "leaflet";
 import * as L from "leaflet";
 import { layerProps, layerEmits, layerSetup } from "../functions/layer";
 
+interface Options extends TileLayerOptions {
+  key: string;
+}
+
 export default defineComponent({
   props: {
     url: {
@@ -11,7 +15,7 @@ export default defineComponent({
       default: null
     },
     options: {
-      type: Object as PropType<TileLayerOptions>
+      type: Object as PropType<Options>
     },
     ...layerProps
   },

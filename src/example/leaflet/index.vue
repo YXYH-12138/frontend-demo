@@ -1,14 +1,14 @@
 <template>
   <div class="home-page">
-    <LMap :options="defaultMapOption">
-      <LTileLayer :url="tileLayerUrl" />
-      <LTileLayer :url="BASE_NORMAL">
+    <LMap :options="MAP_OPTIONS">
+      <LTileLayer :url="tileLayerUrl" :options="options" />
+      <!-- <LTileLayer :url="BASE_NORMAL">
         <LBoundaryCanvas :boundary="eastData" />
-      </LTileLayer>
-      <LWmsTileLayer
+      </LTileLayer> -->
+      <!-- <LWmsTileLayer
         url="http://121.40.117.96:9090/geoserver/gwc/service/wms"
         layers="dtx:east_watershed"
-      />
+      /> -->
       <LFly :active="active" :highlight="{ color: 'red' }" :fly-zoom="12">
         <LFlyItem name="dd">
           <LMarker :lat-lng="[30.34161, 119.82]" :visible="layerVisible.DD">
@@ -46,7 +46,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
-import { BASE_NORMAL, defaultMapOption } from "./constant";
+import { BASE_NORMAL, MAP_OPTIONS } from "./constant";
 import {
   LMap,
   LTileLayer,
@@ -68,7 +68,13 @@ import staions from "@/assets/gis/staion.json";
 
 const mockData = staions.slice(0, 10);
 
-const tileLayerUrl = ref(BASE_NORMAL);
+const tileLayerUrl = ref(
+  "//t{s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk={key}"
+);
+const options = {
+  subdomains: ["0", "1", "2", "3", "4", "5", "6", "7"],
+  key: "63d6e02a1601f2ffa4e5979ce5613371"
+};
 
 const active = ref();
 // 激活的底图

@@ -10,6 +10,7 @@ declare module 'vue' {
     ElContainer: typeof import('element-plus/es')['ElContainer']
     ElMain: typeof import('element-plus/es')['ElMain']
     LBoundaryCanvas: typeof import('./src/components/L/plugins/LBoundaryCanvas.vue')['default']
+    LConfigProvide: typeof import('./src/components/L/components/LConfigProvide.vue')['default']
     LFly: typeof import('./src/components/L/plugins/LFly.vue')['default']
     LFlyItem: typeof import('./src/components/L/plugins/LFlyItem.vue')['default']
     LIcon: typeof import('./src/components/L/components/LIcon.vue')['default']
