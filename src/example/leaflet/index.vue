@@ -9,15 +9,14 @@
         url="http://121.40.117.96:9090/geoserver/gwc/service/wms"
         layers="dtx:east_watershed"
       /> -->
-      <LFly :active="active" :highlight="{ color: 'red' }" :fly-zoom="12">
-        <LFlyItem name="dd">
-          <LMarker :lat-lng="[30.34161, 119.82]" :visible="layerVisible.DD">
-            <LIcon :icon-url="ppImg" :icon-size="[20, 20]">
-              <div class="rain-station"></div>
-            </LIcon>
-            <LToolTip content="123" />
-          </LMarker>
-        </LFlyItem>
+      <LMarker :lat-lng="[30.34161, 119.82]" :visible="layerVisible.DD">
+        <LIcon :icon-url="ppImg" :icon-size="[20, 20]">
+          <div class="rain-station"></div>
+        </LIcon>
+        <LToolTip content="123" />
+      </LMarker>
+      <LFly :lat-lng="active" :highlight="{ color: 'red' }" :fly-zoom="12">
+        <LFlyItem name="dd"> </LFlyItem>
         <LFlyItem name="rr">
           <LLayerGroup :visible="layerVisible.RR">
             <LMarker :lat-lng="[item.lttd, item.lgtd]" v-for="item in mockData" :key="item.stnm">

@@ -12,8 +12,8 @@ import {
 import * as L from "leaflet";
 import mitt from "mitt";
 import { remapEvents, propsBinder, resetWebpackIcon } from "../utils";
-import { mapContextKey, layerMethodsKey, flyContextKey, flyKey, iconUrlKey } from "../context";
-import type { FlyEvents, MapContext } from "../type";
+import { mapContextKey, layerMethodsKey, iconUrlKey } from "../context";
+import type { MapContext } from "../type";
 
 type Props = { crs?: L.CRS; options?: L.MapOptions; zIndex?: number };
 type Emits = {
@@ -27,7 +27,11 @@ const props = withDefaults(defineProps<Props>(), {
 const emits = defineEmits<Emits>();
 
 const attrs = useAttrs();
-const iconDefault = inject(iconUrlKey);
+const iconDefault = inject(iconUrlKey, {
+  iconRetinaUrl: import("leaflet/dist/images/marker-icon-2x.png"),
+  iconUrl: import("leaflet/dist/images/marker-icon.png"),
+  shadowUrl: import("leaflet/dist/images/marker-shadow.png")
+});
 
 const context: MapContext = { events: mitt() };
 const rootEl = ref<HTMLElement>();
@@ -54,8 +58,6 @@ const methods = {
 
 provide(mapContextKey, context);
 provide(layerMethodsKey, methods);
-provide(flyKey, "");
-provide(flyContextKey, { events: mitt<FlyEvents>(), markerMap: new Map() });
 
 onMounted(() => {
   const mapOptions: L.MapOptions = { crs: props.crs, ...props.options };

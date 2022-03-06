@@ -4,14 +4,13 @@ import { flyContextKey, flyKey } from "../context";
 
 const props = defineProps<{ name: string }>();
 
-const flyContext = inject(flyContextKey)!;
-const { markerMap } = flyContext;
+const { markerMap } = inject(flyContextKey, { markerMap: undefined });
 
 provide(flyKey, props.name);
 
-markerMap.has(props.name) || markerMap.set(props.name, []);
+markerMap && (markerMap.has(props.name) || markerMap.set(props.name, []));
 </script>
 
 <template>
-	<slot></slot>
+  <slot></slot>
 </template>

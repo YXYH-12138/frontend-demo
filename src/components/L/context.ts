@@ -3,15 +3,15 @@ import type { Emitter } from "mitt";
 import type { MapContext, FlyEvents, IconDefaultUrl } from "./type";
 
 export type LayerMethods = {
-	addLayer: <T extends L.Layer>(layer: T) => void;
-	removeLayer: <T extends L.Layer>(layer: T) => void;
-	setVisible: <T extends L.Layer>(layer: T, visible: boolean) => void;
+  addLayer: <T extends L.Layer>(layer: T) => void;
+  removeLayer: <T extends L.Layer>(layer: T) => void;
+  setVisible: <T extends L.Layer>(layer: T, visible: boolean) => void;
 };
 
 export const mapContextKey: InjectionKey<MapContext> = Symbol();
 export const flyContextKey: InjectionKey<{
-	events: Emitter<FlyEvents>;
-	markerMap: Map<string, L.Marker[]>;
+  events?: Emitter<FlyEvents>;
+  markerMap?: Map<string, L.Marker[]>;
 }> = Symbol();
 
 export const iconUrlKey: InjectionKey<IconDefaultUrl> = Symbol();
