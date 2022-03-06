@@ -9,15 +9,17 @@
         url="http://121.40.117.96:9090/geoserver/gwc/service/wms"
         layers="dtx:east_watershed"
       /> -->
-      <LMarker :lat-lng="[30.34161, 119.82]" :visible="layerVisible.DD">
-        <LIcon :icon-url="ppImg" :icon-size="[20, 20]">
-          <div class="rain-station"></div>
-        </LIcon>
-        <LToolTip content="123" />
-      </LMarker>
-      <LFly :lat-lng="active" :highlight="{ color: 'red' }" :fly-zoom="12">
-        <LFlyItem name="dd"> </LFlyItem>
-        <LFlyItem name="rr">
+      <LFlyBounds :bounds="bounds" :visible="layerVisible.DD" />
+      <LFlyLatLng :lat-lng="active" :highlight="{ color: 'red' }" :fly-zoom="12">
+        <LFlyLatLngItem name="dd">
+          <LMarker :lat-lng="[30.34161, 119.82]" :visible="layerVisible.DD">
+            <LIcon :icon-url="ppImg" :icon-size="[20, 20]">
+              <div class="rain-station"></div>
+            </LIcon>
+            <LToolTip content="123" />
+          </LMarker>
+        </LFlyLatLngItem>
+        <LFlyLatLngItem name="rr">
           <LLayerGroup :visible="layerVisible.RR">
             <LMarker :lat-lng="[item.lttd, item.lgtd]" v-for="item in mockData" :key="item.stnm">
               <LIcon :icon-url="rrImg" :icon-size="[20, 20]" />
@@ -27,8 +29,8 @@
               </LToolTip>
             </LMarker>
           </LLayerGroup>
-        </LFlyItem>
-      </LFly>
+        </LFlyLatLngItem>
+      </LFlyLatLng>
     </LMap>
     <el-card class="checkbox">
       <el-checkbox v-model="layerVisible.DD" label="雨量"></el-checkbox>
@@ -44,21 +46,23 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref } from "vue";
+import { reactive, ref, shallowRef } from "vue";
 import { MAP_OPTIONS, TIANDITU_URL } from "./constant";
 import {
   LMap,
   LTileLayer,
   LBoundaryCanvas,
   LWmsTileLayer,
+  LFlyBounds,
   LToolTip,
   LPopup,
-  LFly,
+  LFlyLatLng,
   LIcon,
   LMarker,
   LLayerGroup,
-  LFlyItem
+  LFlyLatLngItem
 } from "@/components/L";
+import type { Feature, MultiPolygon } from "geojson";
 // mock
 import ppImg from "@/assets/img/雨量站.png";
 import rrImg from "@/assets/img/水库.png";
@@ -66,7 +70,7 @@ import eastData from "@/assets/gis/east_watershed.json";
 import staions from "@/assets/gis/staion.json";
 
 const mockData = staions.slice(0, 10);
-
+const bounds = shallowRef<Feature<MultiPolygon, any>>();
 const tileLayerUrl = ref(TIANDITU_URL);
 const options = {
   subdomains: ["0", "1", "2", "3", "4", "5", "6", "7"],
@@ -85,6 +89,10 @@ const layerVisible = reactive({
 const flyTo = (data: Record<string, any>) => {
   active.value = [data.lttd, data.lgtd];
 };
+
+import("@/mock/multi_polygon.json").then((data) => {
+  bounds.value = data.default as any;
+});
 </script>
 
 <style scoped lang="scss">

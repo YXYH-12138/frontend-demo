@@ -10,5 +10,6 @@ export { default as LConfigProvide } from "./components/LConfigProvide.vue";
 
 // plugin
 export { default as LBoundaryCanvas } from "./plugins/LBoundaryCanvas.vue";
-export { default as LFly } from "./plugins/LFly.vue";
-export { default as LFlyItem } from "./plugins/LFlyItem.vue";
+export { default as LFlyLatLng } from "./plugins/LFlyLatLng.vue";
+export { default as LFlyLatLngItem } from "./plugins/LFlyLatLngItem.vue";
+export { default as LFlyBounds } from "./plugins/LFlyBounds.vue";

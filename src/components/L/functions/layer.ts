@@ -1,10 +1,15 @@
-import mitt from "mitt";
 import { inject, watch, toRef, provide, onBeforeUnmount } from "vue-demi";
 import * as L from "leaflet";
-import { layerMethodsKey, layerKey, mapContextKey, flyContextKey, flyKey } from "../context";
+import {
+  layerMethodsKey,
+  layerKey,
+  mapContextKey,
+  flyContextKey,
+  flyKey,
+  LayerMethods
+} from "../context";
 import { remapEvents, propsBinder } from "../utils";
 import type { SetupContext, ExtractPropTypes } from "vue-demi";
-import type { FlyEvents } from "../type";
 
 export type LayerEmites = {
   "update:visible": (value: boolean) => void;
@@ -39,8 +44,13 @@ type SetUp<P, E> = (
   layer: L.Layer
 ) => void;
 
-export const layerSetup: SetUp<typeof layerProps, typeof layerEmits> = (props, context, layer) => {
-  const methods = inject(layerMethodsKey)!;
+export const layerSetup: SetUp<typeof layerProps, typeof layerEmits> = (
+  props,
+  context,
+  layer,
+  layerMethods?: LayerMethods
+) => {
+  const methods = layerMethods || inject(layerMethodsKey)!;
   const { events: mapEvents } = inject(mapContextKey)!;
   const { events: flyEvents } = inject(flyContextKey, { events: undefined });
   const flyName = inject(flyKey, "");
