@@ -9,7 +9,7 @@
         url="http://121.40.117.96:9090/geoserver/gwc/service/wms"
         layers="dtx:east_watershed"
       /> -->
-      <LFlyBounds :bounds="bounds" :visible="layerVisible.DD" />
+      <LFlyBounds :bounds="bounds" v-model:visible="layerVisible.geo" />
       <LFlyLatLng :lat-lng="active" :highlight="{ color: 'red' }" :fly-zoom="12">
         <LFlyLatLngItem name="dd">
           <LMarker :lat-lng="[30.34161, 119.82]" :visible="layerVisible.DD">
@@ -35,6 +35,7 @@
     <el-card class="checkbox">
       <el-checkbox v-model="layerVisible.DD" label="雨量"></el-checkbox>
       <el-checkbox v-model="layerVisible.RR" label="水库"></el-checkbox>
+      <el-checkbox v-model="layerVisible.geo" label="geojson"></el-checkbox>
       <ul class="station-list">
         <li v-for="item in mockData" :key="item.stnm" @click="flyTo(item)">
           {{ item.stnm }}
@@ -83,7 +84,8 @@ const baseActive = ref("Terrain");
 // 图层
 const layerVisible = reactive({
   RR: true,
-  DD: true
+  DD: true,
+  geo: false
 });
 
 const flyTo = (data: Record<string, any>) => {

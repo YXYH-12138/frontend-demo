@@ -31,7 +31,7 @@ export default defineComponent({
       current.push(marker);
     }
 
-    layerSetup(props, context, marker);
+    layerSetup(props, context, { layer: marker });
   }
 });
 </script>

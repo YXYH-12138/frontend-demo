@@ -1,22 +1,16 @@
-<script lang="ts">
-import { defineComponent, inject, PropType, toRefs, watch } from "vue-demi";
+<script lang="tsx">
+import { defineComponent, inject, PropType } from "vue-demi";
 import * as L from "leaflet";
 import { layerEmits } from "../functions/layer";
 import { mapContextKey } from "../context";
-import type { Feature, MultiPolygon } from "geojson";
-
-type HighlighOption = {
-  stroke?: boolean;
-  color?: string;
-  weight?: number;
-  fillOpacity?: number;
-  fillColor?: string;
-};
+import LGeoJson from "../components/LGeoJson.vue";
+import type { Feature, MultiPolygon, MultiLineString, Polygon } from "geojson";
 
 export default defineComponent({
+  components: { LGeoJson },
   props: {
-    highlighOption: Object as PropType<HighlighOption>,
-    bounds: Object as PropType<Feature<MultiPolygon, any>>,
+    highlighOption: Object as PropType<L.PathOptions>,
+    bounds: Object as PropType<Feature<MultiPolygon | MultiLineString | Polygon, any>>,
     fitBoundsOptions: Object as PropType<L.FitBoundsOptions>,
     visible: {
       type: Boolean,
@@ -28,11 +22,11 @@ export default defineComponent({
     }
   },
   emits: { ...layerEmits },
-  setup(props, context) {
+  setup(props, { emit }) {
     const { map } = inject(mapContextKey)!;
     if (!map) return;
 
-    const highlighOption = Object.assign<HighlighOption, HighlighOption>(
+    const style = Object.assign<L.PathOptions, L.PathOptions>(
       {
         stroke: true,
         color: "#dc1212",
@@ -43,48 +37,20 @@ export default defineComponent({
       props.highlighOption || {}
     );
 
-    const { bounds, visible } = toRefs(props);
-    let layer: any;
-
-    const cancelHighlight = () => {
-      if (layer) {
-        map.removeLayer(layer);
-        layer = null;
-      }
-    };
-
-    const highlightArea = (data: Feature<MultiPolygon, any>) => {
-      L.geoJSON(data, {
-        onEachFeature: (feature) => {
-          const _layer = L.GeoJSON.geometryToLayer(feature) as any;
-          const bounds = _layer.getBounds();
-          map.flyToBounds(bounds, props.fitBoundsOptions);
-          cancelHighlight();
-          _layer.setStyle(highlighOption);
-          map.addLayer(_layer);
-          layer = _layer;
-        }
-      });
-    };
-
-    watch(visible, (val) => {
-      if (bounds.value) {
-        val ? highlightArea(bounds.value) : cancelHighlight();
-      }
-      context.emit("update:visible", val);
-    });
-
-    watch(
-      bounds,
-      (data) => {
-        data && visible.value && highlightArea(data);
+    const geoJSONOptions: L.GeoJSONOptions = {
+      onEachFeature: (_, layer) => {
+        const bounds = (layer as L.Polyline).getBounds();
+        map.flyToBounds(bounds, props.fitBoundsOptions);
       },
-      { immediate: true }
-    );
+      style
+    };
 
-    props.outerClose && map.on("click", cancelHighlight);
+    props.outerClose && map.on("click", () => emit("update:visible", false));
+
+    return () => {
+      const { bounds, visible } = props;
+      return <LGeoJson geojson={bounds} visible={visible} options={geoJSONOptions} />;
+    };
   }
 });
 </script>
-
-<template></template>

@@ -16,6 +16,7 @@ declare module 'vue' {
     LFlyItem: typeof import('./src/components/L/plugins/LFlyItem.vue')['default']
     LFlyLatLng: typeof import('./src/components/L/plugins/LFlyLatLng.vue')['default']
     LFlyLatLngItem: typeof import('./src/components/L/plugins/LFlyLatLngItem.vue')['default']
+    LGeoJson: typeof import('./src/components/L/components/LGeoJson.vue')['default']
     LIcon: typeof import('./src/components/L/components/LIcon.vue')['default']
     LLayerGroup: typeof import('./src/components/L/components/LLayerGroup.vue')['default']
     LMap: typeof import('./src/components/L/components/LMap.vue')['default']
