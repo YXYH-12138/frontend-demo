@@ -21,7 +21,7 @@ type Emits = {
 };
 
 const props = withDefaults(defineProps<Props>(), {
-  crs: () => L.CRS.EPSG4326,
+  crs: () => L.CRS.EPSG3857,
   zIndex: 1
 });
 const emits = defineEmits<Emits>();

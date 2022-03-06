@@ -46,7 +46,7 @@
 
 <script lang="ts" setup>
 import { reactive, ref } from "vue";
-import { BASE_NORMAL, MAP_OPTIONS } from "./constant";
+import { MAP_OPTIONS, TIANDITU_URL } from "./constant";
 import {
   LMap,
   LTileLayer,
@@ -68,9 +68,7 @@ import staions from "@/assets/gis/staion.json";
 
 const mockData = staions.slice(0, 10);
 
-const tileLayerUrl = ref(
-  "//t{s}.tianditu.gov.cn/vec_w/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=vec&STYLE=default&TILEMATRIXSET=w&FORMAT=tiles&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&tk={key}"
-);
+const tileLayerUrl = ref(TIANDITU_URL);
 const options = {
   subdomains: ["0", "1", "2", "3", "4", "5", "6", "7"],
   key: "63d6e02a1601f2ffa4e5979ce5613371"

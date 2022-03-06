@@ -13,5 +13,5 @@ markerMap.has(props.name) || markerMap.set(props.name, []);
 </script>
 
 <template>
-  <slot></slot>
+	<slot></slot>
 </template>
