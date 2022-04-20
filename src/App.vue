@@ -2,7 +2,7 @@
 import { routes } from "./router";
 import MenuList from "./components/MenuList/index.vue";
 
-const menus = { path: "/", children: [routes[1]] };
+const menus = { path: "/", children: [routes[1], routes[2]] };
 </script>
 
 <template>

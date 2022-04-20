@@ -9,7 +9,7 @@ export default defineComponent({
 	emits: { ...layerEmits },
 	inheritAttrs: false,
 	setup(props, context) {
-		const layerGroup = L.layerGroup(props.layers, {
+		const featureGroup = L.featureGroup(props.layers, {
 			pane: props.pane,
 			attribution: props.attribution
 		});
@@ -18,16 +18,16 @@ export default defineComponent({
 
 		const groupMethods = {
 			addLayer<T extends L.Layer>(layer: T) {
-				layerGroup.hasLayer(layer) || layerGroup.addLayer(layer);
+				featureGroup.hasLayer(layer) || featureGroup.addLayer(layer);
 			},
 			removeLayer<T extends L.Layer>(layer: T) {
-				layerGroup.hasLayer(layer) && layerGroup.removeLayer(layer);
+				featureGroup.hasLayer(layer) && featureGroup.removeLayer(layer);
 			}
 		};
 
 		provide(layerMethodsKey, { ...layerMethods, ...groupMethods });
 
-		layerSetup(props, context, { layer: layerGroup });
+		layerSetup(props, context, { layer: featureGroup });
 	}
 });
 </script>

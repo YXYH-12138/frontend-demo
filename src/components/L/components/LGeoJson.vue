@@ -1,49 +1,33 @@
 <script lang="ts">
 import { defineComponent, inject, PropType, watch, toRefs } from "vue-demi";
 import * as L from "leaflet";
-import { layerProps } from "../functions/layer";
+import { layerProps, layerSetup, layerEmits } from "../functions/layer";
 import { mapContextKey } from "../context";
 import type { GeoJsonObject } from "geojson";
 
 export default defineComponent({
-  props: {
-    geojson: Object as PropType<GeoJsonObject>,
-    options: Object as PropType<L.GeoJSONOptions>,
-    ...layerProps
-  },
-  setup(props) {
-    const { map } = inject(mapContextKey)!;
-    if (!map) return;
+	props: {
+		geojson: Object as PropType<GeoJsonObject>,
+		options: Object as PropType<L.GeoJSONOptions>,
+		...layerProps
+	},
+	emits: { ...layerEmits },
+	setup(props, context) {
+		const { map } = inject(mapContextKey)!;
+		if (!map) return;
 
-    const { geojson, visible } = toRefs(props);
+		const { geojson } = toRefs(props);
 
-    let layer: L.Layer | null;
+		const layer = L.geoJSON(geojson.value, props.options);
 
-    const removeLayer = () => {
-      if (layer) {
-        map.removeLayer(layer);
-        layer = null;
-      }
-    };
+		watch(geojson, (data) => {
+			layer.clearLayers();
+			data && layer.addData(data);
+		});
 
-    const addLayer = (data: GeoJsonObject) => {
-      layer = L.geoJSON(data, props.options);
-      map.addLayer(layer);
-    };
+		layerSetup(props, context, { layer });
 
-    watch(visible, (val) => {
-      val ? geojson.value && addLayer(geojson.value) : removeLayer();
-    });
-
-    watch(
-      geojson,
-      (data) => {
-        data && visible.value && addLayer(data);
-      },
-      { immediate: true }
-    );
-  }
+		return () => null;
+	}
 });
 </script>
-
-<template></template>

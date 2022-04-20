@@ -1,23 +1,23 @@
 import type { Emitter } from "mitt";
 
 export type MapEvents = {
-  // 地图初始化完成
-  ready: L.Map;
-  // 图层切换
-  layerVisible: { layer: L.Layer; visible: boolean; name?: string };
-  "*": void;
+	// 地图初始化完成
+	ready: L.Map;
+	// 图层切换
+	layerVisible: { layer: L.Layer; visible: boolean; name?: string };
+	"*": void;
 };
 
 export type FlyEvents = {
-  layerHidden: { name: string };
-  "*": void;
+	layerHidden: { name: string };
+	"*": void;
 };
 
 export type MapContext = {
-  map?: L.Map;
-  events: Emitter<MapEvents>;
+	map?: L.Map;
+	events: Emitter<MapEvents>;
 };
 
 export type IconDefaultUrl = Partial<
-  Record<"iconRetinaUrl" | "iconUrl" | "shadowUrl", string | Promise<any>>
+	Record<"iconRetinaUrl" | "iconUrl" | "shadowUrl", string | Promise<any>>
 >;

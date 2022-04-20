@@ -1,32 +1,35 @@
 <script lang="ts" setup>
-import { inject, onBeforeUnmount, onMounted, ref, toRef, watch, provide } from "vue-demi";
+import { inject, onBeforeUnmount, onMounted, toRef, watch, provide } from "vue-demi";
 import mitt from "mitt";
 import * as L from "leaflet";
 import { LIcon, LMarker } from "..";
 import { mapContextKey, flyContextKey } from "../context";
 import type { FlyEvents } from "../type";
+import { useVModel } from "@vueuse/core";
 
 type Highlight = boolean | { color?: string };
 const props = withDefaults(
-  defineProps<{
-    latLng?: L.LatLng;
-    highlight?: Highlight;
-    outerClose?: boolean;
-    size?: number[];
-    flyOptions?: L.ZoomPanOptions;
-    flyZoom?: number;
-  }>(),
-  {
-    // 点击地图是否隐藏高亮
-    outerClose: true,
-    // 高亮配置
-    highlight: false,
-    // 大小
-    size: () => [20, 20],
-    // fly的位置
-    latLng: () => L.latLng(0, 0)
-  }
+	defineProps<{
+		latLng?: L.LatLng | number[];
+		highlight?: Highlight;
+		outerClose?: boolean;
+		size?: number[];
+		flyOptions?: L.ZoomPanOptions;
+		flyZoom?: number;
+		visible?: boolean;
+	}>(),
+	{
+		// 点击地图是否隐藏高亮
+		outerClose: true,
+		// 高亮配置
+		highlight: false,
+		// 大小
+		size: () => [20, 20],
+		// fly的位置
+		latLng: () => L.latLng(0, 0)
+	}
 );
+const emits = defineEmits<{ (e: "update:visible", visible: boolean): void }>();
 
 const flyEvents = mitt<FlyEvents>();
 const markerMap = new Map<string, L.Marker[]>();
@@ -35,130 +38,131 @@ provide(flyContextKey, { events: flyEvents, markerMap });
 
 const { map, events: mapEvents } = inject(mapContextKey)!;
 
-const visible = ref(false);
+const visibleModel = useVModel(props, "visible", emits);
 const latLng = toRef(props, "latLng");
 
 const highlightConfig = Object.assign(
-  { color: "blue" },
-  typeof props.highlight === "boolean" ? {} : props.highlight || {}
+	{ color: "blue" },
+	typeof props.highlight === "boolean" ? {} : props.highlight || {}
 );
 
 let preMakrer: L.Marker;
 const flagMap: Record<string, boolean> = {};
 
 const flyTo = (latlng: L.LatLngExpression) => {
-  const { flyZoom, flyOptions, latLng } = props;
-  map!.flyTo(latlng, flyZoom, flyOptions);
-  visible.value = true;
-  if (preMakrer) {
-    const { flyName } = preMakrer.options.params;
-    if (flagMap[flyName] === false) {
-      map!.removeLayer(preMakrer);
-    }
-  }
-  for (const [_, markers] of markerMap) {
-    for (const marker of markers) {
-      if (!map!.hasLayer(marker) && map!.distance(marker.getLatLng(), latLng) === 0) {
-        map!.addLayer(marker);
-        preMakrer = marker;
-        return;
-      }
-    }
-  }
+	const { flyZoom, flyOptions, latLng } = props;
+	map!.flyTo(latlng, flyZoom, flyOptions);
+	visibleModel.value = true;
+	if (preMakrer) {
+		const { flyName } = preMakrer.options.params;
+		if (flagMap[flyName] === false) {
+			map!.removeLayer(preMakrer);
+		}
+	}
+	for (const [, markers] of markerMap) {
+		for (const marker of markers) {
+			if (!map!.hasLayer(marker) && map!.distance(marker.getLatLng(), latLng as L.LatLng) === 0) {
+				map!.addLayer(marker);
+				preMakrer = marker;
+				return;
+			}
+		}
+	}
 };
 
 mapEvents.on("layerVisible", ({ name, visible }) => {
-  if (!name) return;
-  flagMap[name] = visible;
+	if (!name) return;
+	flagMap[name] = visible;
 });
 
 onMounted(() => {
-  if (!map) return;
-  const { outerClose, highlight } = props;
+	if (!map) return;
+	const { outerClose, highlight } = props;
 
-  watch(latLng, (val) => val && flyTo(val));
+	watch(latLng, (val) => val && flyTo(val as L.LatLng));
 
-  outerClose &&
-    map.on("click", () => {
-      visible.value = false;
-    });
+	outerClose &&
+		map.on("click", () => {
+			visibleModel.value = false;
+		});
 
-  highlight &&
-    flyEvents.on("layerHidden", ({ name }) => {
-      if (!visible.value) return;
-      const markers = markerMap.get(name);
-      const has =
-        markers && markers.some((marker) => map.distance(marker.getLatLng(), latLng.value) === 0);
-      if (has) {
-        visible.value = false;
-      }
-    });
+	highlight &&
+		flyEvents.on("layerHidden", ({ name }) => {
+			if (!visibleModel.value) return;
+			const markers = markerMap.get(name);
+			const has =
+				markers &&
+				markers.some((marker) => map.distance(marker.getLatLng(), latLng.value as L.LatLng) === 0);
+			if (has) {
+				visibleModel.value = false;
+			}
+		});
 });
 
 onBeforeUnmount(() => {
-  flyEvents.off("*");
-  markerMap.clear();
+	flyEvents.off("*");
+	markerMap.clear();
 });
 </script>
 
 <template>
-  <slot></slot>
-  <LMarker v-if="highlight" :lat-lng="latLng" :visible="visible" :z-index="-1000">
-    <LIcon :icon-size="size">
-      <ul class="fly-box">
-        <li
-          v-for="item in 3"
-          :key="item"
-          :class="['fly-ripple-' + item]"
-          :style="{ backgroundColor: highlightConfig.color }"
-        />
-      </ul>
-    </LIcon>
-  </LMarker>
+	<slot></slot>
+	<LMarker v-if="highlight" :lat-lng="latLng" :visible="visibleModel" :z-index="-1000">
+		<LIcon :icon-size="size">
+			<ul class="fly-box">
+				<li
+					v-for="item in 3"
+					:key="item"
+					:class="['fly-ripple-' + item]"
+					:style="{ backgroundColor: highlightConfig.color }"
+				/>
+			</ul>
+		</LIcon>
+	</LMarker>
 </template>
 
 <style scoped>
 .fly-box {
-  border-radius: 50%;
-  height: 100%;
+	border-radius: 50%;
+	height: 100%;
 }
 
 .fly-box li {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0;
-  transform-origin: center center;
-  border-radius: 100%;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	transform-origin: center center;
+	border-radius: 100%;
 }
 
 .fly-ripple-1 {
-  animation: pulsate 1.5s infinite 0s;
+	animation: pulsate 1.5s infinite 0s;
 }
 
 .fly-ripple-2 {
-  animation: pulsate 1.5s infinite 0.5s;
+	animation: pulsate 1.5s infinite 0.5s;
 }
 
 .fly-ripple-3 {
-  animation: pulsate 1.5s infinite 1s;
+	animation: pulsate 1.5s infinite 1s;
 }
 
 @keyframes pulsate {
-  0% {
-    transform: scale(0.1, 0.1);
-    opacity: 1;
-  }
+	0% {
+		transform: scale(0.1, 0.1);
+		opacity: 1;
+	}
 
-  40% {
-    opacity: 0.8;
-  }
+	40% {
+		opacity: 0.8;
+	}
 
-  100% {
-    transform: scale(3, 3);
-    opacity: 0;
-  }
+	100% {
+		transform: scale(3, 3);
+		opacity: 0;
+	}
 }
 </style>
