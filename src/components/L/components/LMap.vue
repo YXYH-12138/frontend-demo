@@ -12,7 +12,7 @@ import {
 import * as L from "leaflet";
 import mitt from "mitt";
 import { remapEvents, propsBinder, resetWebpackIcon } from "../utils";
-import { mapContextKey, layerMethodsKey, iconUrlKey } from "../context";
+import { mapContextKey, layerMethodsKey, iconUrlKey, markeMap } from "../context";
 import type { MapContext } from "../type";
 import { useResizeObserver } from "@vueuse/core";
 
@@ -85,6 +85,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	const { map } = context;
 	map && map.remove();
+	markeMap.clear();
 	context.events.off("*");
 });
 

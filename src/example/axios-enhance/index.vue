@@ -2,8 +2,7 @@
 import { getFy2Data, getFy2DataByAxios } from "@/api/modules";
 
 const fy1 = getFy2Data()
-	.pipe(({ data }) => data.data)
-	// .pipe((data) => data.slice(-1))
+	.pipe((data) => data.slice(-1))
 	.subscribe((data) => {
 		console.log(data);
 	})

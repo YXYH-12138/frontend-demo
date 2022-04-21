@@ -1,6 +1,6 @@
 import { inject, watch, toRef, provide, onBeforeUnmount } from "vue-demi";
 import * as L from "leaflet";
-import { layerMethodsKey, layerKey, mapContextKey, flyContextKey, flyKey } from "../context";
+import { layerMethodsKey, layerKey, mapContextKey } from "../context";
 import { remapEvents, propsBinder } from "../utils";
 import type { SetupContext, ExtractPropTypes } from "vue-demi";
 
@@ -40,8 +40,6 @@ type SetUp<P, E> = (
 export const layerSetup: SetUp<typeof layerProps, typeof layerEmits> = (props, context, params) => {
 	const methods = inject(layerMethodsKey)!;
 	const { events: mapEvents } = inject(mapContextKey)!;
-	const { events: flyEvents } = inject(flyContextKey, { events: undefined } as any);
-	const flyName = inject(flyKey, "");
 
 	const { layer } = params;
 
@@ -55,14 +53,10 @@ export const layerSetup: SetUp<typeof layerProps, typeof layerEmits> = (props, c
 	watch(visible, (val) => {
 		methods.setVisible(layer, val);
 		context.emit("update:visible", val);
-		mapEvents.emit("layerVisible", { layer, visible: visible.value, name: flyName });
-		!val && flyEvents && flyName && flyEvents.emit("layerHidden", { name: flyName });
+		mapEvents.emit("layerVisible", { layer, visible: visible.value });
 	});
 
 	visible.value && methods.addLayer(layer);
 
-	onBeforeUnmount(() => {
-		methods.removeLayer(layer);
-		flyEvents && flyName && flyEvents.emit("layerHidden", { name: flyName });
-	});
+	onBeforeUnmount(() => methods.removeLayer(layer));
 };

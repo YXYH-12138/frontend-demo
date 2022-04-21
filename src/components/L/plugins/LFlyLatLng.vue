@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import { inject, onBeforeUnmount, onMounted, toRef, watch, provide } from "vue-demi";
-import mitt from "mitt";
+import { inject, onMounted, toRef, watch, ref } from "vue-demi";
+import { hasOwn } from "@vue/shared";
+import { useVModel } from "@vueuse/core";
 import * as L from "leaflet";
 import { LIcon, LMarker } from "..";
-import { mapContextKey, flyContextKey } from "../context";
-import type { FlyEvents } from "../type";
-import { useVModel } from "@vueuse/core";
+import { mapContextKey, markeMap } from "../context";
 
 type Highlight = boolean | { color?: string };
+
 const props = withDefaults(
 	defineProps<{
-		latLng?: L.LatLng | number[];
+		active?: string | number;
 		highlight?: Highlight;
 		outerClose?: boolean;
 		size?: number[];
@@ -26,82 +26,58 @@ const props = withDefaults(
 		// 大小
 		size: () => [20, 20],
 		// fly的位置
-		latLng: () => L.latLng(0, 0)
+		latLng: () => [0, 0]
 	}
 );
 const emits = defineEmits<{ (e: "update:visible", visible: boolean): void }>();
 
-const flyEvents = mitt<FlyEvents>();
-const markerMap = new Map<string, L.Marker[]>();
+const { map } = inject(mapContextKey)!;
 
-provide(flyContextKey, { events: flyEvents, markerMap });
-
-const { map, events: mapEvents } = inject(mapContextKey)!;
-
-const visibleModel = useVModel(props, "visible", emits);
-const latLng = toRef(props, "latLng");
+const visibleModel = hasOwn(props, "visible") ? ref(true) : useVModel(props, "visible", emits);
+const latLng = ref<L.LatLng>(L.latLng(0, 0));
+const active = toRef(props, "active");
 
 const highlightConfig = Object.assign(
 	{ color: "blue" },
 	typeof props.highlight === "boolean" ? {} : props.highlight || {}
 );
 
-let preMakrer: L.Marker;
-const flagMap: Record<string, boolean> = {};
+let prevMarker: L.Marker;
 
-const flyTo = (latlng: L.LatLngExpression) => {
-	const { flyZoom, flyOptions, latLng } = props;
-	map!.flyTo(latlng, flyZoom, flyOptions);
-	visibleModel.value = true;
-	if (preMakrer) {
-		const { flyName } = preMakrer.options.params;
-		if (flagMap[flyName] === false) {
-			map!.removeLayer(preMakrer);
+const flyTo = (id: string | number) => {
+	const { flyZoom, flyOptions } = props;
+	const marker = markeMap.get(id);
+	if (marker) {
+		latLng.value = marker.getLatLng();
+		map!.flyTo(latLng.value, flyZoom, flyOptions);
+		if (!map!.hasLayer(marker)) {
+			// 移除之前显示的图层
+			prevMarker && map!.removeLayer(prevMarker);
+			prevMarker = marker;
+			map!.addLayer(marker);
 		}
-	}
-	for (const [, markers] of markerMap) {
-		for (const marker of markers) {
-			if (!map!.hasLayer(marker) && map!.distance(marker.getLatLng(), latLng as L.LatLng) === 0) {
-				map!.addLayer(marker);
-				preMakrer = marker;
-				return;
-			}
-		}
+		visibleModel.value = true;
 	}
 };
-
-mapEvents.on("layerVisible", ({ name, visible }) => {
-	if (!name) return;
-	flagMap[name] = visible;
-});
 
 onMounted(() => {
 	if (!map) return;
 	const { outerClose, highlight } = props;
 
-	watch(latLng, (val) => val && flyTo(val as L.LatLng));
+	watch(active, (val) => val && flyTo(val));
+
+	highlight &&
+		map.on("layerremove", () => {
+			const marker = markeMap.get(props.active!);
+			if (marker && !map!.hasLayer(marker)) {
+				visibleModel.value = false;
+			}
+		});
 
 	outerClose &&
 		map.on("click", () => {
 			visibleModel.value = false;
 		});
-
-	highlight &&
-		flyEvents.on("layerHidden", ({ name }) => {
-			if (!visibleModel.value) return;
-			const markers = markerMap.get(name);
-			const has =
-				markers &&
-				markers.some((marker) => map.distance(marker.getLatLng(), latLng.value as L.LatLng) === 0);
-			if (has) {
-				visibleModel.value = false;
-			}
-		});
-});
-
-onBeforeUnmount(() => {
-	flyEvents.off("*");
-	markerMap.clear();
 });
 </script>
 

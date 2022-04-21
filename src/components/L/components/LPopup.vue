@@ -1,5 +1,12 @@
 <script lang="ts">
-import { defineComponent, PropType, inject, shallowRef, onMounted } from "vue-demi";
+import {
+	defineComponent,
+	PropType,
+	inject,
+	shallowRef,
+	onMounted,
+	onBeforeUnmount
+} from "vue-demi";
 import { layerKey } from "../context";
 import { point } from "leaflet";
 import type { Content, PopupOptions, Point } from "leaflet";
@@ -19,6 +26,10 @@ export default defineComponent({
 	setup(props) {
 		const popupEl = shallowRef<HTMLElement>();
 		const layer = inject(layerKey);
+
+		onBeforeUnmount(() => {
+			layer && layer.unbindPopup();
+		});
 
 		onMounted(() => {
 			if (!layer) return;
