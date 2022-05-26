@@ -5,7 +5,7 @@ import * as L from "leaflet";
 import { layerProps, layerEmits, layerSetup } from "../functions/layer";
 
 interface Options extends TileLayerOptions {
-	key: string;
+	key?: string;
 }
 
 export default defineComponent({

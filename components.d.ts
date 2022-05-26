@@ -25,10 +25,16 @@ declare module 'vue' {
     LMarker: typeof import('./src/components/L/components/LMarker.vue')['default']
     Loading: typeof import('element-plus/es')['ElLoadingDirective']
     LPopup: typeof import('./src/components/L/components/LPopup.vue')['default']
+    LRenderer: typeof import('./src/components/L/renderer/LRenderer.vue')['default']
     LTileLayer: typeof import('./src/components/L/components/LTileLayer.vue')['default']
     LToolTip: typeof import('./src/components/L/components/LToolTip.vue')['default']
     LWmsTileLayer: typeof import('./src/components/L/components/LWmsTileLayer.vue')['default']
     MenuList: typeof import('./src/components/MenuList/index.vue')['default']
+    Renderer: typeof import('./src/components/L/renderer/index.vue')['default']
+    TextScroll: typeof import('./src/components/TextScroll/index.vue')['default']
+    TextScrollItem: typeof import('./src/components/TextScroll/TextScrollItem.vue')['default']
+    VScroll: typeof import('./src/components/VScroll/index.vue')['default']
+    VScrollItem: typeof import('./src/components/TextScroll/VScrollItem.vue')['default']
   }
 }
 

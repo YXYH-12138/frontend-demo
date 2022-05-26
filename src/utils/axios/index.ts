@@ -1,5 +1,6 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, Canceler } from "axios";
+import axios from "axios";
 import { AxiosEnhance } from "./axios-enhance";
+import type { AxiosRequestConfig, AxiosInstance, AxiosResponse, Canceler } from "axios";
 
 const enhanceWeakMap = new WeakMap<AxiosInstance, AxiosEnhance[]>();
 
@@ -25,7 +26,7 @@ export class Service {
 	 * 设置取消请求的token
 	 */
 	private setCancelToken(config: AxiosRequestConfig) {
-		if (!config.cancelToken) {
+		if (!config.cancelToken && !config.cancelIgnore) {
 			config.cancelToken = new axios.CancelToken((cancel) => {
 				this.cancelers.push(cancel);
 			});

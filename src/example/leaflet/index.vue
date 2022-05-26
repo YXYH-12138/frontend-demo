@@ -1,14 +1,12 @@
 <template>
 	<div class="home-page">
-		<LMap :options="MAP_OPTIONS">
-			<LTileLayer :url="tileLayerUrl" :options="options" />
+		<LMap :options="MAP_OPTIONS" ref="mapRef">
+			<LTileLayer :url="TianDiTu_Normal" :options="TIANDITU_OPTIONS" />
+			<LTileLayer :url="tileLayerUrl" />
 			<!-- <LTileLayer :url="BASE_NORMAL">
         <LBoundaryCanvas :boundary="eastData" />
       </LTileLayer> -->
-			<!-- <LWmsTileLayer
-        url="http://121.40.117.96:9090/geoserver/gwc/service/wms"
-        layers="dtx:east_watershed"
-      /> -->
+			<!-- <LWmsTileLayer :url="Wms_Url" layers="dtx:dtxgroup" :crs="L.CRS.EPSG4326" /> -->
 			<LFlyBounds :bounds="bounds" v-model:visible="layerVisible.geo" />
 			<LFlyLatLng :active="activeFly" highlight :fly-zoom="12" />
 			<LMarker :lat-lng="[30.34161, 119.82]" :visible="layerVisible.DD" id="pp">
@@ -27,7 +25,12 @@
 					<LIcon :icon-url="rrImg" :icon-size="[20, 20]" />
 					<LPopup>{{ item.stnm }}</LPopup>
 					<LToolTip permanent :offset="[0, -8]">
-						<div class="tooltip-rr-demo">{{ item.stnm }}</div>
+						<!-- {{ item.stnm }} -->
+						{{ row }}
+						<!-- <div class="tooltip-rr-demo">
+							{{ item.stnm }}
+							{{ row }}
+						</div> -->
 					</LToolTip>
 				</LMarker>
 			</LLayerGroup>
@@ -48,7 +51,14 @@
 
 <script lang="ts" setup>
 import { reactive, ref, shallowRef } from "vue";
-import { MAP_OPTIONS, TIANDITU_URL } from "./constant";
+import * as L from "leaflet";
+import {
+	MAP_OPTIONS,
+	TianDiTu_Normal,
+	TianDiTu_Satellite,
+	Wms_Url,
+	TIANDITU_OPTIONS
+} from "./constant";
 import {
 	LMap,
 	LTileLayer,
@@ -71,15 +81,13 @@ import staions from "@/assets/gis/staion.json";
 
 const mockData = staions.slice(0, 10);
 const bounds = shallowRef<Feature<MultiPolygon, any>>();
-const tileLayerUrl = ref(TIANDITU_URL);
-const options = {
-	subdomains: ["0", "1", "2", "3", "4", "5", "6", "7"],
-	key: "63d6e02a1601f2ffa4e5979ce5613371"
-};
+const tileLayerUrl = ref(
+	"https://sldtpt.zjwater.com:6443/ZJSYQJCYJZSPT2/PBS/rest/services/waterMap/MapServer/tile/{z}/{y}/{x}"
+);
+
+const mapRef = shallowRef<{ map: L.Map }>();
 
 const activeFly = ref("");
-// 激活的底图
-const baseActive = ref("Terrain");
 // 图层
 const layerVisible = reactive({
 	RR: true,
@@ -87,12 +95,16 @@ const layerVisible = reactive({
 	geo: false
 });
 
+const row = ref("qawedadasdasd");
+
 const flyTo = (data: Record<string, any>) => {
 	activeFly.value = data.stnm;
+	// tileLayerUrl.value = TianDiTu_Satellite;
+	row.value = "63d6e02a1601f2ffa4e5979ce5613371";
 };
 
 import("@/mock/multi_polygon.json").then((data) => {
-	bounds.value = data.default as any;
+	// bounds.value = data.default as any;
 });
 </script>
 

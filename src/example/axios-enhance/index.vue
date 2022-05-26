@@ -3,20 +3,20 @@ import { getFy2Data, getFy2DataByAxios } from "@/api/modules";
 
 const fy1 = getFy2Data()
 	.pipe((data) => data.slice(-1))
-	.subscribe((data) => {
+	.callback("resolve", (data) => {
 		console.log(data);
 	})
-	.catch((error) => {
+	.callback("catch", (error) => {
 		console.log(error);
 	})
-	.finally(() => {
+	.callback("finally", () => {
 		console.log("finally");
 	})
-	.run();
+	.execute();
 
 const reload = () => {
 	getFy2DataByAxios();
-	fy1.run();
+	fy1.execute();
 };
 </script>
 
