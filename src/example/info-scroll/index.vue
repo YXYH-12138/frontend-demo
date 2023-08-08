@@ -1,11 +1,11 @@
 <template>
 	<div class="box">
 		<TextScroll>
-			<TextScrollItem key="1">1111111111111111111111111111</TextScrollItem>
-			<TextScrollItem key="2">222222222222222222222222222222</TextScrollItem>
-			<TextScrollItem key="3">333333333333333333333333333333</TextScrollItem>
-			<TextScrollItem key="4">44444444444444</TextScrollItem>
-			<TextScrollItem key="5">55555</TextScrollItem>
+			<TextScrollItem>1111111111111111111111111111</TextScrollItem>
+			<TextScrollItem>222222222222222222222222222222</TextScrollItem>
+			<TextScrollItem>333333333333333333333333333333</TextScrollItem>
+			<TextScrollItem>44444444444444</TextScrollItem>
+			<TextScrollItem>55555</TextScrollItem>
 		</TextScroll>
 	</div>
 </template>

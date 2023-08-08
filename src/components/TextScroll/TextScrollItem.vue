@@ -9,10 +9,6 @@ import { inject } from "vue-demi";
 import { Context } from "./token";
 
 export default {
-	props: {
-		// eslint-disable-next-line vue/no-reserved-props
-		key: { type: [String, Number], require: true }
-	},
 	setup() {
 		const { isHorizontal, space } = inject(Context) as any;
 

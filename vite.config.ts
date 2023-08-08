@@ -8,20 +8,20 @@ import { resolve } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [
-    vue(),
-    VueJsx(),
-    AutoImport({
-      resolvers: [ElementPlusResolver()],
-    }),
-    Components({
-      resolvers: [ElementPlusResolver()],
-    }),
-  ],
-  resolve: {
-    alias: {
-      "@": resolve(__dirname, "./src"),
-    },
-  },
-  server: { host: true },
+	plugins: [
+		vue({ reactivityTransform: true }),
+		VueJsx(),
+		AutoImport({
+			resolvers: [ElementPlusResolver()]
+		}),
+		Components({
+			resolvers: [ElementPlusResolver()]
+		})
+	],
+	resolve: {
+		alias: {
+			"@": resolve(__dirname, "./src")
+		}
+	},
+	server: { host: true }
 });

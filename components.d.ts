@@ -12,6 +12,7 @@ declare module 'vue' {
     ElMain: typeof import('element-plus/es')['ElMain']
     ElTable: typeof import('element-plus/es')['ElTable']
     ElTableColumn: typeof import('element-plus/es')['ElTableColumn']
+    ElTabPane: typeof import('element-plus/es')['ElTabPane']
     LBoundaryCanvas: typeof import('./src/components/L/plugins/LBoundaryCanvas.vue')['default']
     LConfigProvide: typeof import('./src/components/L/components/LConfigProvide.vue')['default']
     LFeatureGroup: typeof import('./src/components/L/components/LFeatureGroup.vue')['default']
@@ -33,6 +34,7 @@ declare module 'vue' {
     Renderer: typeof import('./src/components/L/renderer/index.vue')['default']
     TextScroll: typeof import('./src/components/TextScroll/index.vue')['default']
     TextScrollItem: typeof import('./src/components/TextScroll/TextScrollItem.vue')['default']
+    VMessage: typeof import('./src/components/VMessage/index.vue')['default']
     VScroll: typeof import('./src/components/VScroll/index.vue')['default']
     VScrollItem: typeof import('./src/components/TextScroll/VScrollItem.vue')['default']
   }

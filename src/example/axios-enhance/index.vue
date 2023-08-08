@@ -1,30 +1,16 @@
 <script lang="ts" setup>
-import { getFy2Data, getFy2DataByAxios } from "@/api/modules";
+import { getFy2DataByAxios } from "@/api/modules";
 
-const fy1 = getFy2Data()
-	.pipe((data) => data.slice(-1))
-	.callback("resolve", (data) => {
-		console.log(data);
-	})
-	.callback("catch", (error) => {
-		console.log(error);
-	})
-	.callback("finally", () => {
-		console.log("finally");
-	})
-	.execute();
+const { run, data, loading } = getFy2DataByAxios();
 
-const reload = () => {
-	getFy2DataByAxios();
-	fy1.execute();
-};
+// run("1");
 </script>
 
 <template>
 	<div class="box">
-		<el-button type="primary" @click="reload">load</el-button>
-		<el-button type="danger" @click="fy1.cancel()">unsubscribe</el-button>
-		<el-table v-loading="fy1.proxy.loading" :data="fy1.proxy.data" border height="400px">
+		<el-button type="primary" @click="run()">load</el-button>
+		<el-button type="danger" @click="run()">unsubscribe</el-button>
+		<el-table v-loading="loading" :data="data.data.data" border height="400px">
 			<el-table-column prop="title" label="title" width="180" />
 			<el-table-column prop="dateTime" label="dateTime" width="180" />
 			<el-table-column prop="filename" label="filename" />

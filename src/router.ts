@@ -25,6 +25,18 @@ export const routes: RouteRecordRaw[] = [
 		component: () => import("@/example/leaflet-js/index.vue")
 	},
 	{
+		name: "typescript",
+		path: "/typescript",
+		meta: { title: "typescript" },
+		component: () => import("@/example/typescript/index.vue")
+	},
+	{
+		name: "components",
+		path: "/components",
+		meta: { title: "components" },
+		component: () => import("@/example/components/index.vue")
+	},
+	{
 		name: "info-scroll",
 		path: "/info-scroll",
 		meta: { title: "消息滚动" },
@@ -37,9 +49,9 @@ const router = createRouter({
 	routes
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(() => {
 	cancelAll();
-	next();
+	return true;
 });
 
 export default router;

@@ -2,12 +2,17 @@
 	<div class="home-page">
 		<LMap :options="MAP_OPTIONS" ref="mapRef">
 			<LTileLayer :url="TianDiTu_Normal" :options="TIANDITU_OPTIONS" />
-			<LTileLayer :url="tileLayerUrl" />
+			<!-- <LTileLayer :url="tileLayerUrl" /> -->
 			<!-- <LTileLayer :url="BASE_NORMAL">
         <LBoundaryCanvas :boundary="eastData" />
       </LTileLayer> -->
 			<!-- <LWmsTileLayer :url="Wms_Url" layers="dtx:dtxgroup" :crs="L.CRS.EPSG4326" /> -->
-			<LFlyBounds :bounds="bounds" v-model:visible="layerVisible.geo" />
+			<!-- <LFlyBounds :bounds="bounds" v-model:visible="layerVisible.geo" /> -->
+			<LGeoJson
+				v-model:visible="layerVisible.geo"
+				:geojson="bounds"
+				:options="{ style: { color: 'red' } }"
+			/>
 			<LFlyLatLng :active="activeFly" highlight :fly-zoom="12" />
 			<LMarker :lat-lng="[30.34161, 119.82]" :visible="layerVisible.DD" id="pp">
 				<LIcon :icon-url="ppImg" :icon-size="[20, 20]">
@@ -70,7 +75,8 @@ import {
 	LFlyLatLng,
 	LIcon,
 	LMarker,
-	LLayerGroup
+	LLayerGroup,
+	LGeoJson
 } from "@/components/L";
 import type { Feature, MultiPolygon } from "geojson";
 // mock
@@ -104,7 +110,7 @@ const flyTo = (data: Record<string, any>) => {
 };
 
 import("@/mock/multi_polygon.json").then((data) => {
-	// bounds.value = data.default as any;
+	bounds.value = data.default as any;
 });
 </script>
 

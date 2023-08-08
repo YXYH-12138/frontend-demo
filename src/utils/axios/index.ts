@@ -1,83 +1,71 @@
 import axios from "axios";
-import { AxiosEnhance } from "./axios-enhance";
-import type { AxiosRequestConfig, AxiosInstance, AxiosResponse, Canceler } from "axios";
+import { ref, ShallowRef, shallowRef } from "vue";
+import type { AxiosRequestConfig, AxiosInstance, CancelToken, CancelTokenSource } from "axios";
 
-const enhanceWeakMap = new WeakMap<AxiosInstance, AxiosEnhance[]>();
+type Request = (...args: any[]) => Promise<any>;
+type Unpromisify<T> = T extends Promise<infer R> ? R : T;
+type RequestReturn<T extends (...args: any[]) => Promise<any>> = Unpromisify<ReturnType<T>>;
 
-const serviceCache: Service[] = [];
+type Options<P = any> = {
+	defaultParams?: P;
+	defaultData?: any;
+	manual?: boolean;
+};
 
-export class Service {
-	public readonly axiosInstance: AxiosInstance;
-	public readonly config?: AxiosRequestConfig;
-	// 保存取消请求的方法
-	private cancelers: Canceler[] = [];
-
-	public get url() {
-		return this.config?.url || "";
-	}
-
-	constructor(config: AxiosRequestConfig) {
-		this.config = config;
-		this.axiosInstance = axios.create(config);
-		this.axiosInstance.interceptors.request.use(this.setCancelToken.bind(this));
-	}
-
-	/**
-	 * 设置取消请求的token
-	 */
-	private setCancelToken(config: AxiosRequestConfig) {
-		if (!config.cancelToken && !config.cancelIgnore) {
-			config.cancelToken = new axios.CancelToken((cancel) => {
-				this.cancelers.push(cancel);
-			});
-		}
-		return config;
-	}
-
-	/**
-	 * 取消所有请求
-	 */
-	public cancelAll() {
-		const { axiosInstance, cancelers } = this;
-		const enhances = enhanceWeakMap.get(axiosInstance);
-		if (enhances && enhances.length > 0) {
-			enhances.forEach((enhance) => enhance.cancel());
-		}
-		cancelers.forEach((canceler) => canceler());
-		cancelers.length = 0;
-	}
-
-	/**
-	 * 创建AxiosEnhance
-	 * @param url
-	 * @param config
-	 * @returns
-	 */
-	public createAxiosEnhance<T = any, R = AxiosResponse<T>>(
-		url: string,
-		config?: AxiosRequestConfig
-	) {
-		const { axiosInstance } = this;
-		const axiosEnhance = new AxiosEnhance<T, R>(axiosInstance, url, config);
-		let current = enhanceWeakMap.get(axiosInstance);
-		if (!current) {
-			current = [axiosEnhance as AxiosEnhance<any, any>];
-			enhanceWeakMap.set(axiosInstance, current);
-		} else {
-			current.push(axiosEnhance as AxiosEnhance<any, any>);
-		}
-		return axiosEnhance;
-	}
-}
+const cancelMap = new Map<CancelToken, CancelTokenSource>();
 
 export function cancelAll() {
-	serviceCache.forEach((service) => service.cancelAll());
+	cancelMap.forEach((source) => source.cancel());
+	cancelMap.clear();
+}
+
+function setCancelToken(axiosInstance: AxiosInstance) {
+	axiosInstance.interceptors.request.use((config) => {
+		const source = axios.CancelToken.source();
+		if (!config.cancelToken && !config.cancelIgnore) {
+			config.cancelToken = source.token;
+			cancelMap.set(source.token, source);
+		}
+		return config;
+	});
+	axiosInstance.interceptors.response.use((response) => {
+		const { config } = response;
+		if (config.cancelToken) {
+			cancelMap.delete(config.cancelToken);
+		}
+		return response;
+	});
+}
+
+export function createRequest<T extends Request>(requestFn: T, options?: Options<Parameters<T>>) {
+	const loading = ref(false);
+	const data = shallowRef(options?.defaultData) as ShallowRef<RequestReturn<T>>;
+
+	const run = function (...args: Parameters<T>): Promise<RequestReturn<T>> {
+		loading.value = true;
+		return requestFn(...(args.length ? args : options?.defaultParams ?? []))
+			.then((response) => {
+				data.value = response;
+				return response;
+			})
+			.finally(() => {
+				loading.value = false;
+			});
+	};
+
+	if (!options?.manual) {
+		(run as T)();
+	}
+
+	return {
+		loading,
+		data,
+		run
+	};
 }
 
 export function createAxios(config: AxiosRequestConfig) {
-	const service = new Service(config);
-	serviceCache.push(service);
-	return service;
+	const axiosInstance = axios.create({ ...config });
+	setCancelToken(axiosInstance);
+	return axiosInstance;
 }
-
-export { AxiosEnhance };

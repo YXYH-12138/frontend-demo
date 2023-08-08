@@ -8,7 +8,8 @@ import {
 	ref,
 	shallowReactive,
 	toRef,
-	toRefs
+	toRefs,
+	VNode
 } from "vue";
 import { useElementSize } from "@vueuse/core";
 import { Context } from "./token";
@@ -18,7 +19,7 @@ export default {
 		// 滚动反向
 		direction: {
 			type: String, // "horizontal" | "vertical"
-			default: "horizontal"
+			default: "vertical"
 		},
 		// 每多少毫秒滚动一次
 		speed: {
@@ -30,7 +31,7 @@ export default {
 			type: Number,
 			default: 1
 		},
-		// 是否循环
+		// 是否无缝循环滚动
 		loop: {
 			type: Boolean,
 			default: true
@@ -40,6 +41,7 @@ export default {
 			type: Number,
 			default: 500
 		},
+		// 每一个item之间的间距
 		space: {
 			type: Number,
 			default: 20
@@ -59,8 +61,7 @@ export default {
 
 		const wh = props.direction === "horizontal" ? width : height;
 		const field = props.direction === "horizontal" ? "offsetWidth" : "offsetHeight";
-		const currentTranslate =
-			props.direction === "horizontal" ? toRef(translate, "x") : toRef(translate, "y");
+		const currentTranslate = toRef(translate, props.direction === "horizontal" ? "x" : "y");
 
 		const elList = shallowReactive<any[]>([]);
 
@@ -119,7 +120,9 @@ export default {
 			}
 		};
 
-		elList.push(...slots.default());
+		elList.push(
+			...(slots.default() as VNode[]).map((vNode, index) => cloneVNode(vNode, { key: index }))
+		);
 
 		onBeforeUnmount(() => window.cancelAnimationFrame(animationFrameNum));
 
