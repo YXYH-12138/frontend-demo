@@ -5,10 +5,11 @@
 </template>
 
 <script lang="ts">
-import { inject } from "vue-demi";
+import { inject } from "vue";
 import { Context } from "./token";
 
 export default {
+	name: "TextScrollItem",
 	setup() {
 		const { isHorizontal, space } = inject(Context) as any;
 

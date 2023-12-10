@@ -1,16 +1,24 @@
 <script lang="tsx">
+// @ts-check
+
 import {
 	cloneVNode,
 	onBeforeUnmount,
 	onMounted,
 	provide,
 	reactive,
+	shallowRef,
+	watch,
 	ref,
 	shallowReactive,
 	toRef,
-	toRefs,
-	VNode
+	Comment,
+	Fragment,
+	type PropType,
+	type VNode,
+	nextTick
 } from "vue";
+import TextScrollItem from "./TextScrollItem.vue";
 import { useElementSize } from "@vueuse/core";
 import { Context } from "./token";
 
@@ -18,7 +26,7 @@ export default {
 	props: {
 		// 滚动反向
 		direction: {
-			type: String, // "horizontal" | "vertical"
+			type: String as PropType<"horizontal" | "vertical">,
 			default: "vertical"
 		},
 		// 每多少毫秒滚动一次
@@ -45,105 +53,136 @@ export default {
 		space: {
 			type: Number,
 			default: 20
+		},
+		data: {
+			type: Object as PropType<any[]>,
+			required: true
 		}
 	},
-	setup(props: any, context: any) {
+	setup(props, context) {
 		const { slots } = context;
 
 		provide(Context, { space: props.space, isHorizontal: props.direction === "horizontal" });
 
-		const scrollEl = ref<HTMLElement>();
-		const { width, height } = useElementSize(scrollEl);
+		const limt = 2;
+		let itemWH = 0;
 
+		const stack = shallowReactive<any[]>([]);
+
+		const scrollEl = ref<HTMLElement>();
 		const wrapEl = ref<HTMLElement>();
 
 		const translate = reactive({ x: 0, y: 0 });
 
-		const wh = props.direction === "horizontal" ? width : height;
-		const field = props.direction === "horizontal" ? "offsetWidth" : "offsetHeight";
 		const currentTranslate = toRef(translate, props.direction === "horizontal" ? "x" : "y");
 
-		const elList = shallowReactive<any[]>([]);
+		// const elList = shallowReactive<VNode[]>([]);
+
+		const field = props.direction === "horizontal" ? "width" : "height";
+		const getWidthOrHeight = (el?: HTMLElement) =>
+			el ? el.getBoundingClientRect()?.[field] ?? 0 : 0;
 
 		let animationFrameNum: number;
+		let timeOut: number;
 
-		const animationFrame = () => {
-			if (Math.abs(currentTranslate.value) >= (props.loop ? Infinity : wh.value)) {
+		/** 动画执行函数 */
+		function animationFrame() {
+			if (
+				Math.abs(currentTranslate.value) >=
+				(props.loop ? Infinity : getWidthOrHeight(scrollEl.value))
+			) {
 				currentTranslate.value = 0;
-				mount();
+				nextTick(runner);
 			} else {
-				if (
-					props.loop &&
-					Math.abs(currentTranslate.value - props.offset) > elList[0].el[field] + props.space
-				) {
-					elList.push(elList.shift());
+				// const isReset = ;
+				if (props.loop && Math.abs(currentTranslate.value + props.space) > itemWH) {
+					stack.splice(0, props.data.length, ...props.data);
 					currentTranslate.value = 0;
+				} else {
+					currentTranslate.value -= props.offset;
 				}
-				currentTranslate.value -= props.offset;
-				start();
+				nextTick(runner);
 			}
-		};
+		}
 
-		const start = () =>
-			setTimeout(
+		/** 开始执行 */
+		function runner() {
+			timeOut = window.setTimeout(
 				() => (animationFrameNum = window.requestAnimationFrame(animationFrame)),
 				props.speed
 			);
+		}
 
-		const mount = () => {
+		/** 补全元素 */
+		// function pushEl() {
+		// 	const length = elList.length;
+		// 	let index = 0;
+		// 	let wh = 0;
+		// 	let currentSlot: any;
+		// 	// 默认所有元素宽或高的和
+		// 	let start = elList.reduce((acc, cur) => acc + getWidthOrHeight(cur.el as HTMLElement), 0);
+		// 	// 包裹元素的宽高
+		// 	const wrapWh = getWidthOrHeight(wrapEl.value!);
+		// 	// 补齐末尾的元素，让元素宽或高超过包裹元素
+		// 	while (start <= wrapWh && start !== 0) {
+		// 		if (index >= length) {
+		// 			index = 0;
+		// 		}
+		// 		currentSlot = cloneVNode(elList[index++], { key: "__" + elList.length });
+		// 		wh = getWidthOrHeight(currentSlot.el);
+		// 		elList.push(currentSlot);
+		// 		start += wh;
+		// 	}
+		// 	// 补全末尾的元素
+		// 	while (index < length) {
+		// 		elList.push(cloneVNode(elList[index++], { key: "__" + elList.length }));
+		// 	}
+		// }
+
+		function start() {
 			const { startDelay } = props;
-			startDelay && setTimeout(start, startDelay);
-		};
+			startDelay && setTimeout(runner, startDelay);
+		}
 
-		const pushEl = () => {
-			let index = 0,
-				wh = 0,
-				length = elList.length,
-				currentSlot: any;
-			// 默认所有元素宽或高的和
-			let start = elList.reduce((acc, cur) => acc + cur.el[field], 0);
-			// 包裹元素的宽高
-			const wrapWh = wrapEl.value![field];
-			// 补齐末尾的元素，让元素宽或高超过包裹元素
-			while (start <= wrapWh && start !== 0) {
-				if (index >= length) {
-					index = 0;
-				}
-				currentSlot = cloneVNode(elList[index++], { key: "__" + elList.length });
-				wh = currentSlot.el[field];
-				elList.push(currentSlot);
-				start += wh;
+		function stop() {
+			window.clearTimeout(timeOut);
+			window.cancelAnimationFrame(animationFrameNum);
+		}
+
+		function dataChange(data: any[]) {
+			stack.length = 0;
+			for (let index = 0; index < limt; index++) {
+				stack.push(...data);
 			}
-			// 补全末尾的元素
-			while (index < length) {
-				elList.push(cloneVNode(elList[index++], { key: "__" + elList.length }));
+
+			nextTick(() => {
+				const wh = getWidthOrHeight(scrollEl.value);
+				itemWH = (wh - props.space * limt) / limt;
+				console.log(itemWH);
+			});
+
+			if (data.length) {
+				start();
+			} else {
+				currentTranslate.value = 0;
+				stop();
 			}
-		};
+		}
 
-		elList.push(
-			...(slots.default() as VNode[]).map((vNode, index) => cloneVNode(vNode, { key: index }))
-		);
+		watch(() => props.data, dataChange, { immediate: true });
 
-		onBeforeUnmount(() => window.cancelAnimationFrame(animationFrameNum));
+		onBeforeUnmount(stop);
 
-		onMounted(() => {
-			props.loop && pushEl();
-			mount();
-		});
-
-		return { scrollEl, ...toRefs(translate), elList, wrapEl };
-	},
-	render() {
-		const { direction, x, elList, y } = this as any;
-
-		return (
-			<div class="text-scroll-wrap" ref="wrapEl">
+		return () => (
+			<div class="text-scroll-wrap" ref={wrapEl}>
 				<div
-					ref="scrollEl"
-					class={{ flex: direction === "horizontal", "scroll-box": true }}
-					style={{ transform: `translate(${x}px,${y}px)` }}
+					ref={scrollEl}
+					class={{ flex: props.direction === "horizontal", "scroll-box": true }}
+					style={{ transform: `translate(${translate.x}px,${translate.y}px)` }}
 				>
-					{elList}
+					{stack.length
+						? stack.map((row) => <TextScrollItem>{slots.default?.(row)}</TextScrollItem>)
+						: slots.empty?.()}
 				</div>
 			</div>
 		);
@@ -161,7 +200,7 @@ export default {
 	overflow: hidden;
 	.scroll-box {
 		width: auto;
-		height: 100%;
+		height: auto;
 	}
 }
 </style>

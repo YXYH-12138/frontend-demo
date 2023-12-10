@@ -41,6 +41,12 @@ export const routes: RouteRecordRaw[] = [
 		path: "/info-scroll",
 		meta: { title: "消息滚动" },
 		component: () => import("@/example/info-scroll/index.vue")
+	},
+	{
+		name: "vxe-table",
+		path: "/vxe-table",
+		meta: { title: "vxe-table" },
+		component: () => import("@/example/vxe-table/index.vue")
 	}
 ];
 
