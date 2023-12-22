@@ -1,7 +1,7 @@
 import { createApp } from "vue";
-import "virtual:uno.css";
 import App from "./App.vue";
 import router from "./router";
+import "virtual:uno.css";
 
 // css
 import "./assets/css/reset.css";

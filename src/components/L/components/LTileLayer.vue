@@ -24,6 +24,7 @@ export default defineComponent({
 	},
 	inheritAttrs: false,
 	setup(props, context) {
+		console.log({ zIndex: props.zIndex, ...props.options });
 		const layer = L.tileLayer(props.url, { zIndex: props.zIndex, ...props.options });
 		layerSetup(props, context, { layer });
 	}

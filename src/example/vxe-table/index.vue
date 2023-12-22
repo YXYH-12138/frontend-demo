@@ -1,8 +1,13 @@
 <template>
-	<div class="p-10px">
-		<vxe-table :data="tableData">
+	<div class="p-10px w-full box-border">
+		<vxe-table
+			:data="tableData"
+			highlight-current-column
+			@data-paste="handlePaste"
+			:data-paste-config="{ syncData: false }"
+		>
 			<vxe-column type="seq" width="60"></vxe-column>
-			<vxe-column field="name" title="Name"></vxe-column>
+			<vxe-column field="name" title="Name" width="60"></vxe-column>
 			<vxe-column field="sex" title="Sex"></vxe-column>
 			<vxe-column field="age" title="Age"></vxe-column>
 		</vxe-table>
@@ -27,4 +32,8 @@ const tableData = shallowRef<RowVO[]>([
 	{ id: 10003, name: "Test3", role: "PM", sex: "Man", age: 32, address: "Shanghai" },
 	{ id: 10004, name: "Test4", role: "Designer", sex: "Women", age: 24, address: "Shanghai" }
 ]);
+
+function handlePaste(newData: any) {
+	console.log("newData", newData);
+}
 </script>

@@ -11,8 +11,8 @@ export const TianDiTu_Satellite =
 // 天地图配置
 export const TIANDITU_OPTIONS = {
 	format: "image/png",
-	subdomains: ["0", "1", "2", "3", "4", "5", "6", "7"],
-	key: "63d6e02a1601f2ffa4e5979ce5613371",
+	// subdomains: ["0", "1", "2", "3", "4", "5", "6", "7"],
+	// key: "63d6e02a1601f2ffa4e5979ce5613371",
 	minZoom: 0,
 	maxZoom: 17, //天地图经纬度投影的最大缩放级别为17,继续放大则没有瓦片可以拉取
 	tileSize: 256, //使用L.CRS.EPSG4326时需要放开这两个参数

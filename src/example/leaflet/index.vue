@@ -1,8 +1,8 @@
 <template>
 	<div class="home-page">
 		<LMap :options="MAP_OPTIONS" ref="mapRef">
-			<LTileLayer :url="TianDiTu_Normal" :options="TIANDITU_OPTIONS" />
-			<!-- <LTileLayer :url="tileLayerUrl" /> -->
+			<!-- <LTileLayer :url="TianDiTu_Normal" :options="TIANDITU_OPTIONS" /> -->
+			<LTileLayer :url="tileLayerUrl" :options="TIANDITU_OPTIONS" />
 			<!-- <LTileLayer :url="BASE_NORMAL">
         <LBoundaryCanvas :boundary="eastData" />
       </LTileLayer> -->
@@ -88,7 +88,7 @@ import staions from "@/assets/gis/staion.json";
 const mockData = staions.slice(0, 10);
 const bounds = shallowRef<Feature<MultiPolygon, any>>();
 const tileLayerUrl = ref(
-	"https://sldtpt.zjwater.com:6443/ZJSYQJCYJZSPT2/PBS/rest/services/waterMap/MapServer/tile/{z}/{y}/{x}"
+	"https://sldtpt.zjwater.com:6443/web_qtj_ecidi/PBS/rest/services/WYX2021/MapServer/tile/{z}/{y}/{x}"
 );
 
 const mapRef = shallowRef<{ map: L.Map }>();
