@@ -1,13 +1,18 @@
 import { defineConfig } from "vite";
-import { resolve } from "node:path";
+import { join, resolve } from "node:path";
 import vue from "@vitejs/plugin-vue";
 import VueJsx from "@vitejs/plugin-vue-jsx";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { createStyleImportPlugin, VxeTableResolve } from "vite-plugin-style-import";
+import ElementPlus from "unplugin-element-plus/vite";
 
 import UnoCSS from "unocss/vite";
+
+import { createVersion } from "./script/version-check/createVersion";
+
+createVersion(resolve(__dirname, "./public"));
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -20,6 +25,7 @@ export default defineConfig({
 		Components({
 			resolvers: [ElementPlusResolver()]
 		}),
+		ElementPlus({ useSource: true }),
 		UnoCSS(),
 		createStyleImportPlugin({
 			resolves: [VxeTableResolve()]
@@ -39,5 +45,25 @@ export default defineConfig({
 				rewrite: (path) => path.replace("/map", "")
 			}
 		}
+	},
+
+	build: {
+		minify: "esbuild",
+		outDir: join("./dist"),
+		emptyOutDir: true,
+		rollupOptions: {
+			output: {
+				chunkFileNames: "static/js/[name]-[hash].js",
+				entryFileNames: "static/js/[name]-[hash].js",
+				assetFileNames: "static/[ext]/[name]-[hash].[ext]"
+			},
+			external: ["electron"]
+		},
+		// 启动 / 禁用 CSS 代码拆分
+		cssCodeSplit: true,
+		// 禁用 gzip 压缩大小报告。
+		reportCompressedSize: true,
+		// 构建后是否生成 soutrce map 文件
+		sourcemap: false
 	}
 });

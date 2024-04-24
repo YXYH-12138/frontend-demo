@@ -1,9 +1,9 @@
 // leaflet相关
-import "proj4leaflet";
+// import "proj4leaflet";
 
-import "@geoman-io/leaflet-geoman-free";
-import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
-import "leaflet/dist/leaflet.css";
+// import "@geoman-io/leaflet-geoman-free";
+// import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+// import "leaflet/dist/leaflet.css";
 // import "./leaflet/L.Path.DashFlow";
 // import "./leaflet/LTileWmts.js";
 // import "./leaflet/leaflet.ChineseTmsProviders";

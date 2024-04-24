@@ -5,10 +5,11 @@ import "virtual:uno.css";
 
 // css
 import "./assets/css/reset.css";
-import "element-plus/es/components/menu/style/css";
-import "element-plus/es/components/menu-item/style/css";
-import "element-plus/es/components/sub-menu/style/css";
 // plugin
 import plugins from "./plugins";
 
+import { createAutoCheck } from "../script/version-check/auto-check";
+
 createApp(App).use(router).use(plugins).mount("#app");
+
+createAutoCheck().start();
