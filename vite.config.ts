@@ -20,15 +20,24 @@ export default defineConfig({
 		Components({
 			resolvers: [ElementPlusResolver()]
 		}),
+		UnoCSS(),
 		createStyleImportPlugin({
 			resolves: [VxeTableResolve()]
-		}),
-		UnoCSS()
+		})
 	],
 	resolve: {
 		alias: {
 			"@": resolve(__dirname, "./src")
 		}
 	},
-	server: { host: true }
+
+	server: {
+		host: true,
+		proxy: {
+			"/map": {
+				target: "http://gxpt.jxsl.gov.cn/arcgis/rest/services",
+				rewrite: (path) => path.replace("/map", "")
+			}
+		}
+	}
 });

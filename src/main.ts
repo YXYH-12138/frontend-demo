@@ -5,7 +5,6 @@ import "virtual:uno.css";
 
 // css
 import "./assets/css/reset.css";
-import "leaflet/dist/leaflet.css";
 import "element-plus/es/components/menu/style/css";
 import "element-plus/es/components/menu-item/style/css";
 import "element-plus/es/components/sub-menu/style/css";

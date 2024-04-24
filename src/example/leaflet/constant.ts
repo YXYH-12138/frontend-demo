@@ -23,7 +23,7 @@ export const TIANDITU_OPTIONS = {
 export const Wms_Url = "http://121.40.117.96:9090/geoserver/gwc/service/wms";
 
 export const MAP_OPTIONS: L.MapOptions = {
-	zoom: 11.2,
+	zoom: 3,
 	// zoomSnap: 0,
 	// zoomDelta: 0.2,
 	center: [30.39, 119.84],
@@ -32,7 +32,20 @@ export const MAP_OPTIONS: L.MapOptions = {
 	// wheelPxPerZoomLevel: 50,
 	zoomControl: false,
 	attributionControl: false,
-	crs: L.CRS.EPSG4326
+	// crs: L.CRS.EPSG4326
+	crs: new L.Proj.CRS("EPSG:4490", "+proj=longlat +ellps=GRS80 +datum=WGS84 +units=degrees", {
+		origin: [-400.0, 399.9999999999998],
+		resolutions: [
+			0.04399456361617579, 0.021997281808087896, 0.010998639714313444, 0.005499319857156722,
+			0.002749659928578361, 0.0013748311540196835, 6.874143872793388e-4, 3.4370838337017233e-4,
+			1.7185419168508616e-4, 8.592709584254308e-5, 4.296354792127154e-5, 2.148177396063577e-5,
+			1.0740886980317885e-5, 5.370443490158943e-6, 2.684032014576556e-6, 1.342016007288278e-6
+		],
+		bounds: L.bounds(
+			L.point(73.44696044900002, 3.408477306000009),
+			L.point(135.08583068800004, 53.557926178)
+		)
+	})
 	// crs: new L.Proj.CRS("EPSG:4490", "+proj=longlat +ellps=GRS80 +no_defs", {
 	// 	resolutions: [
 	// 		1.40625, 0.703125, 0.3515625, 0.17578125, 0.087890625, 0.0439453125, 0.02197265625,
@@ -42,7 +55,7 @@ export const MAP_OPTIONS: L.MapOptions = {
 	// 		2.1457672119140625e-5, 1.0728836059570312e-5, 5.364418029785156e-6, 2.682209064925356e-6,
 	// 		1.3411045324626732e-6
 	// 	],
-	// 	origin: [-179.9999, 90.00016],
+	// 	origin: [-400.0, 399.9999999999998],
 	// 	bounds: L.bounds([118.6, 31.3], [120.85, 29.8])
 	// })
 	// minZoom: 10,

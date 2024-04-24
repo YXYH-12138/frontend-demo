@@ -2,12 +2,22 @@
 	<div class="p-10px w-full box-border">
 		<vxe-table
 			:data="tableData"
-			highlight-current-column
-			@data-paste="handlePaste"
-			:data-paste-config="{ syncData: false }"
+			:dataPasteConfig="{ onDataPaste: handlePaste }"
+			:edit-config="{ trigger: 'click', mode: 'cell' }"
 		>
 			<vxe-column type="seq" width="60"></vxe-column>
-			<vxe-column field="name" title="Name" width="60"></vxe-column>
+			<vxe-column field="name" title="Name" :edit-render="{ name: 'input' }"></vxe-column>
+			<vxe-column field="sex" title="Sex"></vxe-column>
+			<vxe-column field="age" title="Age"></vxe-column>
+		</vxe-table>
+
+		<vxe-table
+			:data="tableData"
+			:data-paste-config="{ onDataPaste: handlePaste }"
+			:edit-config="{ trigger: 'click', mode: 'cell' }"
+		>
+			<vxe-column type="seq" width="60"></vxe-column>
+			<vxe-column field="name" title="Name" :edit-render="{ name: 'input' }"></vxe-column>
 			<vxe-column field="sex" title="Sex"></vxe-column>
 			<vxe-column field="age" title="Age"></vxe-column>
 		</vxe-table>
@@ -34,6 +44,7 @@ const tableData = shallowRef<RowVO[]>([
 ]);
 
 function handlePaste(newData: any) {
-	console.log("newData", newData);
+	console.log(tableData.value);
+	// tableData.value = newData;
 }
 </script>

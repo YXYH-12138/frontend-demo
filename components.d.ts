@@ -31,6 +31,7 @@ declare module 'vue' {
     LToolTip: typeof import('./src/components/L/components/LToolTip.vue')['default']
     LWmsTileLayer: typeof import('./src/components/L/components/LWmsTileLayer.vue')['default']
     MenuList: typeof import('./src/components/MenuList/index.vue')['default']
+    PreviewWord: typeof import('./src/components/PreviewWord/index.vue')['default']
     Renderer: typeof import('./src/components/L/renderer/index.vue')['default']
     TextScroll: typeof import('./src/components/TextScroll/index.vue')['default']
     TextScrollItem: typeof import('./src/components/TextScroll/TextScrollItem.vue')['default']

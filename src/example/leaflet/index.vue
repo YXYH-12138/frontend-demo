@@ -1,8 +1,8 @@
 <template>
 	<div class="home-page">
-		<LMap :options="MAP_OPTIONS" ref="mapRef">
+		<LMap :options="MAP_OPTIONS" ref="mapRef" @ready="init">
 			<!-- <LTileLayer :url="TianDiTu_Normal" :options="TIANDITU_OPTIONS" /> -->
-			<LTileLayer :url="tileLayerUrl" :options="TIANDITU_OPTIONS" />
+			<!-- <LWmsTileLayer :url="tileLayerUrl" layers="m_sx" :options="opts" /> -->
 			<!-- <LTileLayer :url="BASE_NORMAL">
         <LBoundaryCanvas :boundary="eastData" />
       </LTileLayer> -->
@@ -84,12 +84,22 @@ import ppImg from "@/assets/img/雨量站.png";
 import rrImg from "@/assets/img/水库.png";
 import eastData from "@/assets/gis/east_watershed.json";
 import staions from "@/assets/gis/staion.json";
+import { tiledMapLayer, type TiledMapLayerOptions } from "esri-leaflet";
 
 const mockData = staions.slice(0, 10);
 const bounds = shallowRef<Feature<MultiPolygon, any>>();
 const tileLayerUrl = ref(
-	"https://sldtpt.zjwater.com:6443/web_qtj_ecidi/PBS/rest/services/WYX2021/MapServer/tile/{z}/{y}/{x}"
+	"http://gxpt.jxsl.gov.cn/arcgis/rest/services/basemap/JXVectorBasemap/MapServer/tile/{z}/{y}/{x}"
 );
+
+const opts = {
+	key: "U2lWYNEdoOSRUf wPqcR7w==",
+	format: "image/png",
+	minZoom: 0,
+	maxZoom: 17, //天地图经纬度投影的最大缩放级别为17,继续放大则没有瓦片可以拉取
+	tileSize: 256, //使用L.CRS.EPSG4326时需要放开这两个参数
+	zoomOffset: 1 //使用L.CRS.EPSG4326时需要放开这两个参数
+};
 
 const mapRef = shallowRef<{ map: L.Map }>();
 
@@ -108,6 +118,39 @@ const flyTo = (data: Record<string, any>) => {
 	// tileLayerUrl.value = TianDiTu_Satellite;
 	row.value = "63d6e02a1601f2ffa4e5979ce5613371";
 };
+
+function init() {
+	const { map } = mapRef.value!;
+	const subdomains: string[] = [];
+	for (let i = 0; i <= 15; i++) {
+		subdomains.push(i + "");
+	}
+
+	const tileLayerUrl =
+		"http://gxpt.jxsl.gov.cn/arcgis/rest/services/basemap/JXVectorBasemap/MapServer/tile/{z}/{y}/{x}?code=5597d0bd91b3b4519afdb316efd57dbce";
+
+	L.tileLayer(tileLayerUrl).addTo(map!);
+
+	// tiledMapLayer({
+	// 	// tileSize: 256,
+	// 	// zoomOffset: 1,
+	// 	subdomains,
+	// 	url: "http://gxpt.jxsl.gov.cn/arcgis/rest/services/basemap/JXVectorBasemap/MapServer/tile/{z}/{y}/{x}?code=5597d0bd91b3b4519afdb316efd57dbce"
+	// }).addTo(map);
+	// L.tileLayer
+	// 	.wmts("https://gatewayproxy-jcpt.mwr.cn/mdem30m/wmts100?k=I2U1Xc6hX+ka1ieW5jo1BA==", {
+	// 		layer: "m_dem30m",
+	// 		tilematrixset: "GoogleMapsCompatible_m_dem30m",
+	// 		Format: "image/png",
+	// 		crs: L.CRS.EPSG4326,
+	// 		// matrixIds: "",
+	// 		// TileMatrix: "6",
+	// 		tileSize: 256, //使用L.CRS.EPSG4326时需要放开这两个参数
+	// 		zoomOffset: 1 //使用L.CRS.EPSG4326时需要放开这两个参数
+	// 		// TileMatrix: "EPSG:900913:8"
+	// 	})
+	// 	.addTo(map);
+}
 
 import("@/mock/multi_polygon.json").then((data) => {
 	bounds.value = data.default as any;

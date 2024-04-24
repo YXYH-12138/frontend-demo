@@ -13,25 +13,10 @@ export function parseString(text: string) {
 		.filter((item) => item.length);
 }
 
-// function checkVersion(minVersion: string): boolean {
-// 	const minVersionArr = minVersion.split(".");
-// 	const currentVersionArr = version.split(".");
-// 	const result: boolean[] = [];
-// 	for (let i = 0; i < minVersionArr.length; i++) {
-// 		if (parseInt(currentVersionArr[i]) > parseInt(minVersionArr[i])) {
-// 			result.push(false);
-// 		} else {
-// 			result.push(true);
-// 		}
-// 	}
-// 	console.log(result);
-// 	return !result.some((val) => val);
-// }
-
 export const tableHelper = {
-	addEmitOption: (function () {
+	addEmitOption: function (instance: any, event: string) {
 		if (isVue3) {
-			return function (instance: any, event: string) {
+			tableHelper.addEmitOption = function (instance: any, event: string) {
 				const {
 					emitsOptions,
 					propsOptions: [propsOptions]
@@ -43,8 +28,9 @@ export const tableHelper = {
 					propsOptions[`on${capitalize(event)}`] = { 0: false, 1: true, type: Function };
 				}
 			};
+			tableHelper.addEmitOption(instance, event);
 		} else {
-			return noop;
+			tableHelper.addEmitOption = noop;
 		}
-	})()
+	}
 };

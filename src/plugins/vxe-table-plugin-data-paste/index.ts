@@ -1,37 +1,26 @@
-import { ComponentInternalInstance } from "vue";
 import { isArray } from "xe-utils";
-import { parseString, tableHelper } from "./utils";
+import { parseString } from "./utils";
 import type { VxeGlobalInterceptorHandles, VXETableCore } from "vxe-table";
 
+interface DataPasteConfig$ {
+	/**
+	 * 解析数据时忽略的字段
+	 * @default ['seq', 'checkbox']
+	 */
+	ignoreField?: string[];
+	onDataPaste?: (data: any[]) => void;
+}
+
 declare module "vxe-table/types/table" {
-	export interface VxeTableEventProps<D = VxeTableDataRow> {
-		onDataPaste?: (data: VxeTableEvents.DataPaste<D>) => void;
-	}
-	// eslint-disable-next-line @typescript-eslint/no-namespace
-	export namespace VxeTableEvents {
-		export type DataPaste<D = any> = (data: D) => void;
-	}
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	export namespace VxeTablePropTypes {
-		export type DataPasteConfig = {
-			/**
-			 * 解析数据时忽略的字段
-			 * @default ['seq', 'checkbox']
-			 */
-			ignoreField?: string[];
-			/**
-			 * 是否同步data
-			 * @default true
-			 */
-			syncData?: boolean;
-		};
+		export type DataPasteConfig = DataPasteConfig$;
 	}
 }
 
 type $VxeTable = VxeGlobalInterceptorHandles.InterceptorParams["$table"];
 
-function parseText(text: string, vxeTable: $VxeTable) {
-	const ignoreField: string[] = ["seq", "checkbox"];
+function parseText(text: string, ignoreField: string[], vxeTable: $VxeTable) {
 	const textIsToArray = isArray(text);
 
 	const allData: any[] = textIsToArray ? JSON.parse(text) : parseString(text);
@@ -62,24 +51,28 @@ function parseText(text: string, vxeTable: $VxeTable) {
 	return newData;
 }
 
-function handlePaste(e: ClipboardEvent, vxeTable: $VxeTable, instance: ComponentInternalInstance) {
-	if (!e.clipboardData) return;
-	const text = e.clipboardData.getData("text/plain");
+const shouldPaste = (e: ClipboardEvent) => {
+	const el = e.target as HTMLElement;
+	return e.clipboardData && el.tagName.toUpperCase() !== "INPUT";
+};
+
+function handlePaste(e: ClipboardEvent, vxeTable: $VxeTable, config: DataPasteConfig$) {
+	if (!shouldPaste(e)) return;
+	const text = e.clipboardData!.getData("text/plain");
 	if (text == null) return;
-	const newData = parseText(text, vxeTable);
-	// vxeTable.loadData(newData);
-	instance.props.data = newData;
-	instance.emit("dataPaste", newData);
+	const newData = parseText(text, config.ignoreField ?? ["seq", "checkbox"], vxeTable);
+	console.log(vxeTable);
+	vxeTable.loadData(newData);
+	config.onDataPaste && config.onDataPaste(newData);
 }
 
 function handleMounted(params: VxeGlobalInterceptorHandles.InterceptorParams) {
 	const { instance } = params.$table;
-	if (!instance) return;
+	const config = instance.attrs["data-paste-config"] || instance.attrs["dataPasteConfig"];
+	if (!instance || !config) return;
 	const { el } = instance.vnode;
-	tableHelper.addEmitOption(instance, "dataPaste");
-	console.log(instance);
 	if (el) {
-		(el as HTMLElement).addEventListener("paste", (e) => handlePaste(e, params.$table, instance));
+		(el as HTMLElement).addEventListener("paste", (e) => handlePaste(e, params.$table, config));
 	}
 }
 

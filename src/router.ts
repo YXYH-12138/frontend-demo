@@ -47,6 +47,18 @@ export const routes: RouteRecordRaw[] = [
 		path: "/vxe-table",
 		meta: { title: "vxe-table" },
 		component: () => import("@/example/vxe-table/index.vue")
+	},
+	{
+		name: "preview-word",
+		path: "/preview-word",
+		meta: { title: "preview-word" },
+		component: () => import("@/example/preview-word/index.vue")
+	},
+	{
+		name: "leaflet-freedraw",
+		path: "/leaflet-freedraw",
+		meta: { title: "leaflet-freedraw" },
+		component: () => import("@/example/leaflet-freedraw/index.vue")
 	}
 ];
 
