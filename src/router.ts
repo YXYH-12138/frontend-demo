@@ -4,7 +4,7 @@ import { cancelAll } from "@/utils/axios";
 export const routes: RouteRecordRaw[] = [
 	{
 		path: "/",
-		redirect: "/vxe-table"
+		redirect: "/info-scroll"
 	},
 	// {
 	// 	name: "leflet",
@@ -30,12 +30,12 @@ export const routes: RouteRecordRaw[] = [
 	// 	meta: { title: "components" },
 	// 	component: () => import("@/example/components/index.vue")
 	// },
-	// {
-	// 	name: "info-scroll",
-	// 	path: "/info-scroll",
-	// 	meta: { title: "消息滚动" },
-	// 	component: () => import("@/example/info-scroll/index.vue")
-	// },
+	{
+		name: "info-scroll",
+		path: "/info-scroll",
+		meta: { title: "消息滚动" },
+		component: () => import("@/example/info-scroll/index.vue")
+	},
 	{
 		name: "vxe-table",
 		path: "/vxe-table",

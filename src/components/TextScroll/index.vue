@@ -1,38 +1,28 @@
 <script lang="tsx">
-// @ts-check
-
 import {
-	cloneVNode,
 	onBeforeUnmount,
-	onMounted,
-	provide,
 	reactive,
 	shallowRef,
 	watch,
 	ref,
-	shallowReactive,
 	toRef,
-	Comment,
-	Fragment,
 	type PropType,
-	type VNode,
 	nextTick
 } from "vue";
 import TextScrollItem from "./TextScrollItem.vue";
-import { useElementSize } from "@vueuse/core";
-import { Context } from "./token";
+import type { RectData, Direction } from "./props";
 
 export default {
 	props: {
 		// 滚动反向
 		direction: {
-			type: String as PropType<"horizontal" | "vertical">,
+			type: String as PropType<Direction>,
 			default: "vertical"
 		},
 		// 每多少毫秒滚动一次
 		speed: {
 			type: Number,
-			default: 15
+			default: 10
 		},
 		// 每一次滚动的距离 px
 		offset: {
@@ -42,7 +32,7 @@ export default {
 		// 是否无缝循环滚动
 		loop: {
 			type: Boolean,
-			default: true
+			default: false
 		},
 		// 多少延迟之后开始滚动
 		startDelay: {
@@ -62,47 +52,55 @@ export default {
 	setup(props, context) {
 		const { slots } = context;
 
-		provide(Context, { space: props.space, isHorizontal: props.direction === "horizontal" });
+		const stack = shallowRef<any[]>([]);
 
-		const limt = 2;
-		let itemWH = 0;
-
-		const stack = shallowReactive<any[]>([]);
+		const rectData = reactive<Array<RectData>>([]);
 
 		const scrollEl = ref<HTMLElement>();
 		const wrapEl = ref<HTMLElement>();
 
 		const translate = reactive({ x: 0, y: 0 });
 
-		const currentTranslate = toRef(translate, props.direction === "horizontal" ? "x" : "y");
+		const isHorizontal = () => props.direction === "horizontal";
 
-		// const elList = shallowReactive<VNode[]>([]);
+		const currentTranslate = toRef(translate, isHorizontal() ? "x" : "y");
 
-		const field = props.direction === "horizontal" ? "width" : "height";
+		const field = isHorizontal() ? "width" : "height";
 		const getWidthOrHeight = (el?: HTMLElement) =>
 			el ? el.getBoundingClientRect()?.[field] ?? 0 : 0;
 
 		let animationFrameNum: number;
 		let timeOut: number;
 
+		const getRectSum = (maxLen?: number) =>
+			rectData.slice(0, maxLen).reduce((acc, cur) => acc + cur[field] + cur.space, 0);
+
+		/** 判断是否需要滚动，当数组超过容器宽度时，需要滚动 */
+		function shouldScroll() {
+			if (!stack.value.length) return false;
+			const wh = getWidthOrHeight(wrapEl.value);
+			return getRectSum() > wh;
+		}
+
 		/** 动画执行函数 */
 		function animationFrame() {
-			if (
-				Math.abs(currentTranslate.value) >=
-				(props.loop ? Infinity : getWidthOrHeight(scrollEl.value))
-			) {
-				currentTranslate.value = 0;
-				nextTick(runner);
-			} else {
-				// const isReset = ;
-				if (props.loop && Math.abs(currentTranslate.value + props.space) > itemWH) {
-					stack.splice(0, props.data.length, ...props.data);
-					currentTranslate.value = 0;
-				} else {
-					currentTranslate.value -= props.offset;
-				}
-				nextTick(runner);
+			const { data, offset } = props;
+
+			const len = data.length;
+
+			let translate = currentTranslate.value;
+
+			const distance = getRectSum(len);
+
+			translate -= offset;
+
+			if (Math.abs(translate) - rectData[len - 1].space >= distance) {
+				translate = 0;
 			}
+
+			currentTranslate.value = translate;
+
+			runner();
 		}
 
 		/** 开始执行 */
@@ -112,32 +110,6 @@ export default {
 				props.speed
 			);
 		}
-
-		/** 补全元素 */
-		// function pushEl() {
-		// 	const length = elList.length;
-		// 	let index = 0;
-		// 	let wh = 0;
-		// 	let currentSlot: any;
-		// 	// 默认所有元素宽或高的和
-		// 	let start = elList.reduce((acc, cur) => acc + getWidthOrHeight(cur.el as HTMLElement), 0);
-		// 	// 包裹元素的宽高
-		// 	const wrapWh = getWidthOrHeight(wrapEl.value!);
-		// 	// 补齐末尾的元素，让元素宽或高超过包裹元素
-		// 	while (start <= wrapWh && start !== 0) {
-		// 		if (index >= length) {
-		// 			index = 0;
-		// 		}
-		// 		currentSlot = cloneVNode(elList[index++], { key: "__" + elList.length });
-		// 		wh = getWidthOrHeight(currentSlot.el);
-		// 		elList.push(currentSlot);
-		// 		start += wh;
-		// 	}
-		// 	// 补全末尾的元素
-		// 	while (index < length) {
-		// 		elList.push(cloneVNode(elList[index++], { key: "__" + elList.length }));
-		// 	}
-		// }
 
 		function start() {
 			const { startDelay } = props;
@@ -150,23 +122,19 @@ export default {
 		}
 
 		function dataChange(data: any[]) {
-			stack.length = 0;
-			for (let index = 0; index < limt; index++) {
-				stack.push(...data);
-			}
+			stack.value = [...data];
 
 			nextTick(() => {
-				const wh = getWidthOrHeight(scrollEl.value);
-				itemWH = (wh - props.space * limt) / limt;
-				console.log(itemWH);
+				if (shouldScroll()) {
+					if (props.loop) {
+						stack.value = [...data, ...data];
+					}
+					start();
+				} else {
+					currentTranslate.value = 0;
+					stop();
+				}
 			});
-
-			if (data.length) {
-				start();
-			} else {
-				currentTranslate.value = 0;
-				stop();
-			}
 		}
 
 		watch(() => props.data, dataChange, { immediate: true });
@@ -180,8 +148,18 @@ export default {
 					class={{ flex: props.direction === "horizontal", "scroll-box": true }}
 					style={{ transform: `translate(${translate.x}px,${translate.y}px)` }}
 				>
-					{stack.length
-						? stack.map((row) => <TextScrollItem>{slots.default?.(row)}</TextScrollItem>)
+					{stack.value.length
+						? stack.value.map((row, i) => (
+								<TextScrollItem
+									index={i}
+									key={i}
+									reacData={rectData}
+									space={props.space}
+									direction={props.direction}
+								>
+									{slots.default?.(row)}
+								</TextScrollItem>
+						  ))
 						: slots.empty?.()}
 				</div>
 			</div>
