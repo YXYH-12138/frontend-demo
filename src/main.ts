@@ -8,8 +8,10 @@ import "./assets/css/reset.css";
 // plugin
 import plugins from "./plugins";
 
-import { createAutoCheck } from "../script/version-check/auto-check";
+import { createAutoCheck } from "../script/version-check";
 
 createApp(App).use(router).use(plugins).mount("#app");
 
-createAutoCheck().start();
+if (!import.meta.env.DEV) {
+	createAutoCheck({ useWorker: false }).start();
+}

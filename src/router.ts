@@ -4,7 +4,7 @@ import { cancelAll } from "@/utils/axios";
 export const routes: RouteRecordRaw[] = [
 	{
 		path: "/",
-		redirect: "/axios-enhance"
+		redirect: "/vxe-table"
 	},
 	// {
 	// 	name: "leflet",
@@ -12,12 +12,6 @@ export const routes: RouteRecordRaw[] = [
 	// 	meta: { title: "leflet" },
 	// 	component: () => import("@/example/leaflet/index.vue")
 	// },
-	{
-		name: "axios-enhance",
-		path: "/axios-enhance",
-		meta: { title: "axios-enhance" },
-		component: () => import("@/example/axios-enhance/index.vue")
-	},
 	// {
 	// 	name: "leaflet-js",
 	// 	path: "/leaflet-js",

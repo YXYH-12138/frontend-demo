@@ -17,7 +17,14 @@
 			"@/*": ["src/*"]
 		}
 	},
-	"include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "script/**/*.ts"],
+	"include": [
+		"src/**/*.ts",
+		"src/**/*.d.ts",
+		"src/**/*.tsx",
+		"src/**/*.vue",
+		"script/**/*.ts",
+		"public/run.js"
+	],
 	"references": [
 		{
 			"path": "./tsconfig.node.json"

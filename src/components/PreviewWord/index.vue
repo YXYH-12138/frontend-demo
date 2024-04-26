@@ -4,7 +4,7 @@
 
 <script lang="ts" setup>
 import { nextTick, shallowRef, watch } from "vue";
-import { renderAsync, Options } from "docx-preview";
+import { renderAsync, type Options } from "docx-preview";
 
 // https://www.npmjs.com/package/docx-preview
 
