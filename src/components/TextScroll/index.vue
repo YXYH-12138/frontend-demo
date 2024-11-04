@@ -14,7 +14,7 @@ import type { RectData, Direction } from "./props";
 
 export default {
 	props: {
-		// 滚动反向
+		// 滚动方向
 		direction: {
 			type: String as PropType<Direction>,
 			default: "vertical"

@@ -11,23 +11,25 @@ import { visualizer } from "rollup-plugin-visualizer";
 
 import UnoCSS from "unocss/vite";
 
-import { createVersion } from "./script/version-check/createVersion";
+// import { createVersion } from "./script/version-check/createVersion";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
-	if (command === "build") {
-		createVersion(resolve(__dirname, "./public"));
-	}
+	// if (command === "build") {
+	// 	createVersion(resolve(__dirname, "./public"));
+	// }
 
 	return {
 		plugins: [
 			vue({ reactivityTransform: true }),
 			VueJsx(),
 			AutoImport({
-				resolvers: [ElementPlusResolver()]
+				resolvers: [ElementPlusResolver()],
+				dts: resolve(__dirname, "./src/typings/auto-imports.d.ts")
 			}),
 			Components({
-				resolvers: [ElementPlusResolver()]
+				resolvers: [ElementPlusResolver()],
+				dts: resolve(__dirname, "./src/typings/auto-imports.d.ts")
 			}),
 			ElementPlus({ useSource: true }),
 			UnoCSS(),
@@ -72,7 +74,8 @@ export default defineConfig(({ command }) => {
 						dayjs: ["dayjs"],
 						exceljs: ["exceljs"],
 						docxPreview: ["docx-preview"],
-						elementPlus: ["element-plus"]
+						elementPlus: ["element-plus"],
+						turf: ["@turf/turf"]
 					}
 				}
 			},

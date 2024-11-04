@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref, watchEffect, type Ref } from "vue";
 import { getFy2Data } from "@/api/modules";
-import { sleep } from "@/utils/main";
+import { sleep } from "@/utils";
 import { Message } from "@/components/VMessage";
 
 const a = ref(0);

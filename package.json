@@ -1,5 +1,5 @@
 {
-	"name": "swui",
+	"name": "demo",
 	"private": true,
 	"version": "0.0.0",
 	"scripts": {
@@ -9,6 +9,8 @@
 	},
 	"dependencies": {
 		"@geoman-io/leaflet-geoman-free": "^2.15.0",
+		"@meta2d/core": "1.0.54",
+		"@turf/turf": "^7.1.0",
 		"@vitejs/plugin-vue-jsx": "^3.1.0",
 		"@vueuse/core": "^8.3.0",
 		"@vueuse/integrations": "^8.3.1",
@@ -23,12 +25,12 @@
 		"leaflet-freedraw": "^2.13.3",
 		"lodash-es": "^4.17.21",
 		"mitt": "^3.0.0",
+		"ol": "^9.1.0",
 		"pinia": "^2.0.11",
 		"proj4": "^2.7.5",
 		"proj4leaflet": "^1.0.2",
 		"rxjs": "^7.5.5",
 		"sass": "^1.49.9",
-		"shunw-cli": "^1.0.5",
 		"ts-node": "^10.9.2",
 		"unocss": "^0.58.0",
 		"vue": "^3.2.31",

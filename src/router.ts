@@ -4,14 +4,14 @@ import { cancelAll } from "@/utils/axios";
 export const routes: RouteRecordRaw[] = [
 	{
 		path: "/",
-		redirect: "/info-scroll"
+		redirect: "/ol"
 	},
-	// {
-	// 	name: "leflet",
-	// 	path: "/leaflet",
-	// 	meta: { title: "leflet" },
-	// 	component: () => import("@/example/leaflet/index.vue")
-	// },
+	{
+		name: "leflet",
+		path: "/leaflet",
+		meta: { title: "leflet" },
+		component: () => import("@/example/leaflet/index.vue")
+	},
 	// {
 	// 	name: "leaflet-js",
 	// 	path: "/leaflet-js",
@@ -37,17 +37,29 @@ export const routes: RouteRecordRaw[] = [
 		component: () => import("@/example/info-scroll/index.vue")
 	},
 	{
-		name: "vxe-table",
-		path: "/vxe-table",
-		meta: { title: "vxe-table" },
-		component: () => import("@/example/vxe-table/index.vue")
-	},
-	{
-		name: "preview-word",
-		path: "/preview-word",
-		meta: { title: "preview-word" },
-		component: () => import("@/example/preview-word/index.vue")
+		name: "meta2d",
+		path: "/meta2d",
+		meta: { title: "meta2d" },
+		component: () => import("@/example/meta2d/index.vue")
 	}
+	// {
+	// 	name: "vxe-table",
+	// 	path: "/vxe-table",
+	// 	meta: { title: "vxe-table" },
+	// 	component: () => import("@/example/vxe-table/index.vue")
+	// },
+	// {
+	// 	name: "ol",
+	// 	path: "/ol",
+	// 	meta: { title: "ol" },
+	// 	component: () => import("@/example/openlayer/index.vue")
+	// },
+	// {
+	// 	name: "preview-word",
+	// 	path: "/preview-word",
+	// 	meta: { title: "preview-word" },
+	// 	component: () => import("@/example/preview-word/index.vue")
+	// }
 	// {
 	// 	name: "leaflet-freedraw",
 	// 	path: "/leaflet-freedraw",
