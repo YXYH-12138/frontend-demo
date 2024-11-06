@@ -1,8 +1,8 @@
-import { inject, watch, toRef, provide, onBeforeUnmount } from "vue-demi";
+import { inject, watch, toRef, provide, onBeforeUnmount } from " vue";
 import * as L from "leaflet";
 import { layerMethodsKey, layerKey, mapContextKey } from "../context";
 import { remapEvents, propsBinder } from "../utils";
-import type { SetupContext, ExtractPropTypes } from "vue-demi";
+import type { SetupContext, ExtractPropTypes } from " vue";
 
 export type LayerEmites = {
 	"update:visible": (value: boolean) => void;

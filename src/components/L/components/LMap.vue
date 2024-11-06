@@ -8,7 +8,7 @@ import {
 	provide,
 	ref,
 	useAttrs
-} from "vue-demi";
+} from " vue";
 import * as L from "leaflet";
 import mitt from "mitt";
 import { remapEvents, propsBinder, resetWebpackIcon } from "../utils";

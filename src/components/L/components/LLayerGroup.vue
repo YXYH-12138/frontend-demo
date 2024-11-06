@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, inject, PropType, provide } from "vue-demi";
+import { defineComponent, inject, PropType, provide } from " vue";
 import * as L from "leaflet";
 import { layerProps, layerEmits, layerSetup } from "../functions/layer";
 import { layerMethodsKey } from "../context";

@@ -8,7 +8,6 @@ import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import { createStyleImportPlugin, VxeTableResolve } from "vite-plugin-style-import";
 import ElementPlus from "unplugin-element-plus/vite";
 import { visualizer } from "rollup-plugin-visualizer";
-
 import UnoCSS from "unocss/vite";
 
 // import { createVersion } from "./script/version-check/createVersion";
@@ -28,8 +27,8 @@ export default defineConfig(({ command }) => {
 				dts: resolve(__dirname, "./src/typings/auto-imports.d.ts")
 			}),
 			Components({
-				resolvers: [ElementPlusResolver()],
-				dts: resolve(__dirname, "./src/typings/auto-imports.d.ts")
+				resolvers: [ElementPlusResolver({ importStyle: "sass" })],
+				dts: resolve(__dirname, "./src/typings/components.d.ts")
 			}),
 			ElementPlus({ useSource: true }),
 			UnoCSS(),

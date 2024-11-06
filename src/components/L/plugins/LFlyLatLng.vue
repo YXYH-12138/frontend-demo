@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { inject, onMounted, toRef, watch, ref } from "vue-demi";
+import { inject, onMounted, toRef, watch, ref } from " vue";
 import { hasOwn } from "@vue/shared";
 import { useVModel } from "@vueuse/core";
 import * as L from "leaflet";

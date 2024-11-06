@@ -36,24 +36,24 @@ export const routes: RouteRecordRaw[] = [
 		meta: { title: "消息滚动" },
 		component: () => import("@/example/info-scroll/index.vue")
 	},
-	{
-		name: "meta2d",
-		path: "/meta2d",
-		meta: { title: "meta2d" },
-		component: () => import("@/example/meta2d/index.vue")
-	}
+	// {
+	// 	name: "meta2d",
+	// 	path: "/meta2d",
+	// 	meta: { title: "meta2d" },
+	// 	component: () => import("@/example/meta2d/index.vue")
+	// }
 	// {
 	// 	name: "vxe-table",
 	// 	path: "/vxe-table",
 	// 	meta: { title: "vxe-table" },
 	// 	component: () => import("@/example/vxe-table/index.vue")
 	// },
-	// {
-	// 	name: "ol",
-	// 	path: "/ol",
-	// 	meta: { title: "ol" },
-	// 	component: () => import("@/example/openlayer/index.vue")
-	// },
+	{
+		name: "ol",
+		path: "/ol",
+		meta: { title: "ol" },
+		component: () => import("@/example/openlayer/index.vue")
+	}
 	// {
 	// 	name: "preview-word",
 	// 	path: "/preview-word",
