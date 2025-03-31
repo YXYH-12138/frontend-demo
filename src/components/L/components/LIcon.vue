@@ -8,7 +8,7 @@ import {
 	Comment,
 	VNode,
 	PropType
-} from " vue";
+} from "vue";
 import * as L from "leaflet";
 import { propsBinder } from "../utils";
 import { layerKey } from "../context";

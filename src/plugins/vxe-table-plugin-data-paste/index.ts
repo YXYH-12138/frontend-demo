@@ -1,5 +1,5 @@
 import { isArray } from "xe-utils";
-import { parseString } from "./utils";
+import { stringToArray } from "@/utils";
 import type { VxeGlobalInterceptorHandles, VXETableCore } from "vxe-table";
 
 interface DataPasteConfig$ {
@@ -8,10 +8,13 @@ interface DataPasteConfig$ {
 	 * @default ['seq', 'checkbox']
 	 */
 	ignoreField?: string[];
+	// 自定义解析的逻辑
+	parseString?: (text: string) => any[];
+	// 粘贴完成发出的事件
 	onDataPaste?: (data: any[]) => void;
 }
 
-declare module "vxe-table/types/table" {
+declare module "vxe-table" {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	export namespace VxeTablePropTypes {
 		export type DataPasteConfig = DataPasteConfig$;
@@ -20,10 +23,22 @@ declare module "vxe-table/types/table" {
 
 type $VxeTable = VxeGlobalInterceptorHandles.InterceptorParams["$table"];
 
-function parseText(text: string, ignoreField: string[], vxeTable: $VxeTable) {
-	const textIsToArray = isArray(text);
+function parseText(text: string, config: DataPasteConfig$, vxeTable: $VxeTable) {
+	const { ignoreField, parseString } = config as Required<DataPasteConfig$>;
 
-	const allData: any[] = textIsToArray ? JSON.parse(text) : parseString(text);
+	let data: any = null;
+	try {
+		data = JSON.parse(text);
+	} catch {
+		//
+	}
+	const textIsToArray = isArray(data);
+
+	const allData: any[] = textIsToArray
+		? data
+		: parseString
+		? parseString(text)
+		: stringToArray(text);
 
 	let newData: any[] = [];
 	// vxeTable
@@ -31,7 +46,9 @@ function parseText(text: string, ignoreField: string[], vxeTable: $VxeTable) {
 
 	const columns = vxeTable
 		.getColumns()
-		.filter((item) => (item.type ? !ignoreField.includes(item.type) : true));
+		.filter((item) =>
+			item.type ? !ignoreField.includes(item.type) : !ignoreField.includes(item.field)
+		);
 
 	if (textIsToArray) {
 		newData = allData.slice(0, maxIndex);
@@ -60,19 +77,27 @@ function handlePaste(e: ClipboardEvent, vxeTable: $VxeTable, config: DataPasteCo
 	if (!shouldPaste(e)) return;
 	const text = e.clipboardData!.getData("text/plain");
 	if (text == null) return;
-	const newData = parseText(text, config.ignoreField ?? ["seq", "checkbox"], vxeTable);
-	console.log(vxeTable);
-	vxeTable.loadData(newData);
+	if (!config.ignoreField) {
+		config.ignoreField = ["seq", "checkbox"];
+	} else {
+		config.ignoreField = config.ignoreField.concat(["seq", "checkbox"]);
+	}
+	const newData = parseText(text, config, vxeTable);
 	config.onDataPaste && config.onDataPaste(newData);
 }
 
 function handleMounted(params: VxeGlobalInterceptorHandles.InterceptorParams) {
-	const { instance } = params.$table;
-	const config = instance.attrs["data-paste-config"] || instance.attrs["dataPasteConfig"];
-	if (!instance || !config) return;
-	const { el } = instance.vnode;
+	const tableInstance = params.$grid || params.$table;
+	const { renderVN, context } = tableInstance;
+	if (!context || !renderVN) return;
+	const { attrs } = context;
+	const config = attrs["data-paste-config"] || attrs["dataPasteConfig"];
+	if (!config) return;
+	const el = (renderVN() as any).props.ref.value;
 	if (el) {
-		(el as HTMLElement).addEventListener("paste", (e) => handlePaste(e, params.$table, config));
+		(el as HTMLElement).addEventListener("paste", (e) =>
+			handlePaste(e, tableInstance as $VxeTable, config)
+		);
 	}
 }
 
@@ -85,9 +110,5 @@ export const VXETablePluginDataPaste = {
 		});
 	}
 };
-
-if (typeof window !== "undefined" && window.VXETable && window.VXETable.use) {
-	window.VXETable.use(VXETablePluginDataPaste);
-}
 
 export default VXETablePluginDataPaste;

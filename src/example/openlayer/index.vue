@@ -11,7 +11,7 @@ import { HomeMap, useMarker, useSection } from "./map";
 
 const map = new HomeMap();
 
-useSection(map);
+// useSection(map);
 // useMarker(map);
 </script>
 

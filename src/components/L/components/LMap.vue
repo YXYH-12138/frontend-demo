@@ -1,14 +1,5 @@
 <script lang="ts" setup>
-import {
-	inject,
-	markRaw,
-	nextTick,
-	onBeforeUnmount,
-	onMounted,
-	provide,
-	ref,
-	useAttrs
-} from " vue";
+import { inject, markRaw, nextTick, onBeforeUnmount, onMounted, provide, ref, useAttrs } from "vue";
 import * as L from "leaflet";
 import mitt from "mitt";
 import { remapEvents, propsBinder, resetWebpackIcon } from "../utils";

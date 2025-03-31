@@ -184,3 +184,18 @@ export const enum FeatureColor {
 	// eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
 	超校核 = "orange"
 }
+
+export const JS_MAP_URL = "https://120.201.227.180:8190";
+// wms
+export const MAP_WMS_URL = import.meta.env.VITE_MAP_API + "/geoserver/liaoning/wms";
+// 天地图token
+export const TIAN_TK = "4e663361fafe62c28e0c3dc115047428";
+
+// 天地图矢量服务地址
+export const TIAN_VEW_W = `http://t1.tianditu.com/DataServer?T=vec_w&tk=${TIAN_TK}&x={x}&y={y}&l={z}`;
+// 天地图地形图
+export const TIAN_TER_W = `http://t1.tianditu.com/DataServer?T=ter_w&tk=${TIAN_TK}&x={x}&y={y}&l={z}`;
+// 天地图影像底图
+export const TIAN_IMG_W = `http://t1.tianditu.com/DataServer?T=img_w&tk=${TIAN_TK}&x={x}&y={y}&l={z}`;
+// 影像注记
+export const TIAN_CIA_W = `http://t1.tianditu.com/DataServer?T=cva_w&tk=${TIAN_TK}&x={x}&y={y}&l={z}`;

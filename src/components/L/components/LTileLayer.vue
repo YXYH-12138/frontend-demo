@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { defineComponent, PropType } from " vue";
+import { defineComponent, PropType } from "vue";
 import { TileLayerOptions } from "leaflet";
 import * as L from "leaflet";
 import { layerProps, layerEmits, layerSetup } from "../functions/layer";

@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, onMounted, ref } from " vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { messageProps, messageEmits } from "./message";
 
 export default defineComponent({

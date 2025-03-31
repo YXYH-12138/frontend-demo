@@ -1,16 +1,17 @@
 import XEUtils from "xe-utils";
-import {
-	VXETableCore,
+import type {
+	VxeUIExport,
 	VxeTableConstructor,
 	VxeTablePropTypes,
 	VxeTableDefines,
 	VxeGlobalInterceptorHandles
 } from "vxe-table";
-import ExcelJS from "exceljs";
+import type ExcelJS from "exceljs";
 
-let vxetable: VXETableCore;
+let globalVxetable: VxeUIExport;
+let globalExcelJS: any;
 
-declare module "vxe-table/types/table" {
+declare module "vxe-table" {
 	// eslint-disable-next-line @typescript-eslint/no-namespace
 	export namespace VxeTableDefines {
 		export interface ExtortSheetMethodParams {
@@ -128,33 +129,12 @@ function getDefaultBorderStyle() {
 	};
 }
 
-/**
- * 重置datas中的数据
- *  如果是插槽的数据会出现数据缺失这里进行处理
- */
-function resetDatas(datas: any[], columns: VxeTableDefines.ColumnInfo[]) {
-	const idMap = columns.reduce<Record<string, VxeTableDefines.ColumnInfo>>(
-		(acc, cur) => Object.assign(acc, { [cur.id]: cur }),
-		{}
-	);
-	for (const row of datas) {
-		const keys = Object.keys(row);
-		for (const id of keys) {
-			const currentColumn = idMap[id];
-			if (!currentColumn || !row._row) continue;
-			const value = row._row[currentColumn.field];
-			if (value != undefined) {
-				row[id] = value;
-			}
-		}
-	}
-}
-
 function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
 	const msgKey = "xlsx";
-	const { modal, t } = vxetable;
+	const { modal, t } = globalVxetable;
 	const { $table, options, columns, colgroups, datas } = params;
 	const { props, reactData } = $table;
+	const { computeColumnOpts } = $table.getComputeMaps();
 	const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = props;
 	const { rowHeight } = reactData;
 	const {
@@ -168,6 +148,7 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 		useStyle,
 		sheetMethod
 	} = options;
+	const columnOpts = computeColumnOpts.value;
 	const showMsg = message !== false;
 	const mergeCells = $table.getMergeCells();
 	const colList: any[] = [];
@@ -175,13 +156,8 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 	const sheetCols: any[] = [];
 	const sheetMerges: { s: { r: number; c: number }; e: { r: number; c: number } }[] = [];
 	let beforeRowCount = 0;
-	const colHead: any = {};
-
-	resetDatas(datas, columns);
-
 	columns.forEach((column) => {
-		const { id, field, renderWidth } = column;
-		colHead[id] = original ? field : column.getTitle();
+		const { id, renderWidth } = column;
 		sheetCols.push({
 			key: id,
 			width: XEUtils.ceil(renderWidth / 8, 1)
@@ -190,7 +166,7 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 	// 处理表头
 	if (isHeader) {
 		// 处理分组
-		if (isColgroup && !original && colgroups) {
+		if (isColgroup && colgroups) {
 			colgroups.forEach((cols, rIndex) => {
 				const groupHead: any = {};
 				columns.forEach((column) => {
@@ -200,7 +176,13 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 					const { _colSpan, _rowSpan } = column;
 					const validColumn = getValidColumn(column);
 					const columnIndex = columns.indexOf(validColumn);
-					groupHead[validColumn.id] = original ? validColumn.field : column.getTitle();
+					const headExportMethod =
+						(column as any).headerExportMethod || (columnOpts as any).headerExportMethod;
+					groupHead[validColumn.id] = headExportMethod
+						? headExportMethod({ column, options, $table })
+						: original
+						? validColumn.field
+						: column.getTitle();
 					if (_colSpan > 1 || _rowSpan > 1) {
 						sheetMerges.push({
 							s: { r: rIndex, c: columnIndex },
@@ -211,12 +193,23 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 				colList.push(groupHead);
 			});
 		} else {
+			const colHead: any = {};
+			columns.forEach((column) => {
+				const { id, field } = column as any;
+				const headExportMethod =
+					(column as any).headerExportMethod || (columnOpts as any).headerExportMethod;
+				colHead[id] = headExportMethod
+					? headExportMethod({ column, options, $table })
+					: original
+					? field
+					: column.getTitle();
+			});
 			colList.push(colHead);
 		}
 		beforeRowCount += colList.length;
 	}
 	// 处理合并
-	if (isMerge && !original) {
+	if (isMerge) {
 		mergeCells.forEach((mergeItem) => {
 			const {
 				row: mergeRowIndex,
@@ -247,7 +240,7 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 		const footers = getFooterData(options, footerData);
 		const mergeFooterItems = $table.getMergeFooterItems();
 		// 处理合并
-		if (isMerge && !original) {
+		if (isMerge) {
 			mergeFooterItems.forEach((mergeItem) => {
 				const {
 					row: mergeRowIndex,
@@ -272,9 +265,8 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 			footList.push(item);
 		});
 	}
-
 	const exportMethod = () => {
-		const workbook = new ExcelJS.Workbook();
+		const workbook: ExcelJS.Workbook = new (globalExcelJS || (window as any).ExcelJS).Workbook();
 		const sheet = workbook.addWorksheet(sheetName);
 		workbook.creator = "vxe-table";
 		sheet.columns = sheetCols;
@@ -357,7 +349,8 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 				});
 			});
 		}
-		if (useStyle && sheetMethod) {
+		// 自定义处理
+		if (sheetMethod) {
 			sheetMethod({
 				options: options,
 				workbook,
@@ -399,7 +392,7 @@ function downloadFile(
 	blob: Blob,
 	options: VxeTablePropTypes.ExportConfig
 ) {
-	const { modal, t } = vxetable;
+	const { modal, t } = globalVxetable;
 	const { message, filename, type } = options;
 	const showMsg = message !== false;
 	if (window.Blob) {
@@ -426,7 +419,7 @@ function checkImportData(tableFields: string[], tableTitles: string[], fields: s
 }
 
 function importError(params: VxeGlobalInterceptorHandles.InterceptorImportParams) {
-	const { modal, t } = vxetable;
+	const { modal, t } = globalVxetable;
 	const { $table, options } = params;
 	const { internalData } = $table;
 	const { _importReject } = internalData;
@@ -440,7 +433,7 @@ function importError(params: VxeGlobalInterceptorHandles.InterceptorImportParams
 }
 
 function importXLSX(params: VxeGlobalInterceptorHandles.InterceptorImportParams) {
-	const { modal, t } = vxetable;
+	const { modal, t } = globalVxetable;
 	const { $table, columns, options, file } = params;
 	const { internalData } = $table;
 	const { _importResolve } = internalData;
@@ -461,7 +454,7 @@ function importXLSX(params: VxeGlobalInterceptorHandles.InterceptorImportParams)
 			field && tableFields.push(field);
 			title && tableTitles.push(title);
 		});
-		const workbook = new ExcelJS.Workbook();
+		const workbook: ExcelJS.Workbook = new (globalExcelJS || (window as any).ExcelJS).Workbook();
 		const readerTarget = evnt.target;
 		if (readerTarget) {
 			workbook.xlsx.load(readerTarget.result as ArrayBuffer).then((wb) => {
@@ -477,7 +470,7 @@ function importXLSX(params: VxeGlobalInterceptorHandles.InterceptorImportParams)
 							list.forEach((cellValue, cIndex) => {
 								// key可能是title或field，是title需要特殊处理
 								const key = fields[cIndex];
-								item[key] = cellValue;
+								item[fields[cIndex]] = cellValue;
 								item[fieldMap[key]] = cellValue;
 							});
 							const record: any = {};
@@ -534,30 +527,53 @@ function handleExportEvent(params: VxeGlobalInterceptorHandles.InterceptorExport
 }
 
 /**
- * 基于 vxe-table 表格的增强插件，支持导出 xlsx 格式
+ * 基于 vxe-table 表格的扩展插件，支持导出 xlsx 格式
  */
 export const VXETablePluginExportXLSX = {
-	install(vxetablecore: VXETableCore) {
-		const { setup, interceptor } = vxetablecore;
+	install(
+		vxetable: VxeUIExport,
+		options?: {
+			ExcelJS?: any;
+		}
+	) {
+		// 检查版本
+		if (!/^(4)\./.test(vxetable.version) && !/v4/i.test((vxetable as any).v)) {
+			console.error("[vxe-table-plugin-export-pdf 4.x] Version vxe-table 4.x is required");
+		}
 
-		vxetable = vxetablecore;
+		globalVxetable = vxetable;
+		globalExcelJS = options ? options.ExcelJS : null;
 
-		setup({
+		const setConfig = vxetable.setConfig || vxetable.config;
+		setConfig({
+			table: {
+				importConfig: {
+					_typeMaps: {
+						xlsx: 1
+					}
+				} as any,
+				exportConfig: {
+					_typeMaps: {
+						xlsx: 1
+					}
+				} as any
+			},
+			// 兼容老
 			export: {
 				types: {
 					xlsx: 0
 				}
-			}
+			} as any
 		});
-		interceptor.mixin({
+		vxetable.interceptor.mixin({
 			"event.import": handleImportEvent,
 			"event.export": handleExportEvent
 		});
 	}
 };
 
-if (typeof window !== "undefined" && window.VXETable && window.VXETable.use) {
-	window.VXETable.use(VXETablePluginExportXLSX);
-}
+// if (typeof window !== "undefined" && window.VXETable && window.VXETable.use) {
+// 	window.VXETable.use(VXETablePluginExportXLSX);
+// }
 
 export default VXETablePluginExportXLSX;

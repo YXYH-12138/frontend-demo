@@ -8,37 +8,11 @@
       </LTileLayer> -->
 			<!-- <LWmsTileLayer :url="Wms_Url" layers="dtx:dtxgroup" :crs="L.CRS.EPSG4326" /> -->
 			<!-- <LFlyBounds :bounds="bounds" v-model:visible="layerVisible.geo" /> -->
-			<LGeoJson
+			<!-- <LGeoJson
 				v-model:visible="layerVisible.geo"
 				:geojson="bounds"
 				:options="{ style: { color: 'red' } }"
-			/>
-			<LFlyLatLng :active="activeFly" highlight :fly-zoom="12" />
-			<LMarker :lat-lng="[30.34161, 119.82]" :visible="layerVisible.DD" id="pp">
-				<LIcon :icon-url="ppImg" :icon-size="[20, 20]">
-					<div class="rain-station"></div>
-				</LIcon>
-				<LToolTip content="123" />
-			</LMarker>
-			<LLayerGroup :visible="layerVisible.RR">
-				<LMarker
-					:lat-lng="[item.lttd, item.lgtd]"
-					v-for="item in mockData"
-					:key="item.stnm"
-					:id="item.stnm"
-				>
-					<LIcon :icon-url="rrImg" :icon-size="[20, 20]" />
-					<LPopup>{{ item.stnm }}</LPopup>
-					<LToolTip permanent :offset="[0, -8]">
-						<!-- {{ item.stnm }} -->
-						{{ row }}
-						<!-- <div class="tooltip-rr-demo">
-							{{ item.stnm }}
-							{{ row }}
-						</div> -->
-					</LToolTip>
-				</LMarker>
-			</LLayerGroup>
+			/> -->
 		</LMap>
 		<el-card class="checkbox">
 			<el-checkbox v-model="layerVisible.DD" label="雨量"></el-checkbox>
@@ -55,37 +29,14 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, shallowRef } from "vue";
+import { onMounted, reactive, ref, shallowRef } from "vue";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import {
-	MAP_OPTIONS,
-	TianDiTu_Normal,
-	TianDiTu_Satellite,
-	Wms_Url,
-	TIANDITU_OPTIONS
-} from "./constant";
-import {
-	LMap,
-	LTileLayer,
-	LBoundaryCanvas,
-	LWmsTileLayer,
-	LFlyBounds,
-	LToolTip,
-	LPopup,
-	LFlyLatLng,
-	LIcon,
-	LMarker,
-	LLayerGroup,
-	LGeoJson
-} from "@/components/L";
+import { MAP_OPTIONS, TianDiTu_Normal, TIANDITU_OPTIONS } from "./constant";
+import { LMap, LTileLayer, LGeoJson } from "@/components/L";
 import type { Feature, MultiPolygon } from "geojson";
 // mock
-import ppImg from "@/assets/img/雨量站.png";
-import rrImg from "@/assets/img/水库.png";
-import eastData from "@/assets/gis/east_watershed.json";
 import staions from "@/assets/gis/staion.json";
-import { tiledMapLayer, type TiledMapLayerOptions } from "esri-leaflet";
 
 const mockData = staions.slice(0, 10);
 const bounds = shallowRef<Feature<MultiPolygon, any>>();
@@ -121,7 +72,16 @@ const flyTo = (data: Record<string, any>) => {
 };
 
 function init() {
-	// const { map } = mapRef.value!;
+	const { map } = mapRef.value!;
+	L.tileLayer
+		.wms("http://localhost:9010/geoserver/base/wms", {
+			layers: "base:hunan_dike",
+			zIndex: 99,
+			transparent: true,
+			format: "image/png"
+			// srs: "EPSG:4326"
+		})
+		.addTo(map);
 	// const tileLayerUrl =
 	// 	"http://gxpt.jxsl.gov.cn/arcgis/rest/services/basemap/JXVectorBasemap/MapServer/tile/{z}/{y}/{x}?code=5597d0bd91b3b4519afdb316efd57dbce";
 	// L.tileLayer(tileLayerUrl).addTo(map!);
@@ -133,9 +93,11 @@ function init() {
 	// }).addTo(map);
 }
 
-import("@/mock/multi_polygon.json").then((data) => {
-	bounds.value = data.default as any;
-});
+onMounted(init);
+
+// import("@/mock/multi_polygon.json").then((data) => {
+// 	bounds.value = data.default as any;
+// });
 </script>
 
 <style scoped lang="scss">

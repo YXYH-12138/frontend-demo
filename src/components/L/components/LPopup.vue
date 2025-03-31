@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, PropType, inject, shallowRef, onMounted, onBeforeUnmount } from " vue";
+import { defineComponent, PropType, inject, shallowRef, onMounted, onBeforeUnmount } from "vue";
 import { layerKey } from "../context";
 import { point } from "leaflet";
 import type { Content, PopupOptions, Point } from "leaflet";

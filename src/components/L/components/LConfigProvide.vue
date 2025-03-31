@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { provide } from " vue";
+import { provide } from "vue";
 import { iconUrlKey } from "../context";
 
 const props = defineProps<{

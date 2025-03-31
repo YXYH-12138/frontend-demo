@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, PropType } from " vue";
+import { defineComponent, PropType } from "vue";
 import * as L from "leaflet";
 import { layerProps, layerEmits, layerSetup } from "../functions/layer";
 import { markeMap } from "../context";

@@ -1,5 +1,5 @@
 <script lang="tsx">
-import { defineComponent, onMounted, inject } from " vue";
+import { defineComponent, onMounted, inject } from "vue";
 import * as L from "leaflet";
 import { layerProps, layerEmits, layerSetup } from "../functions/layer";
 import { layerKey } from "../context";

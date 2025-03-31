@@ -1,0 +1,43 @@
+{
+	"compilerOptions": {
+		"composite": true,
+		"tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+		"target": "ES2020",
+		"module": "ESNext",
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"skipLibCheck": true,
+		"useDefineForClassFields": true,
+		"experimentalDecorators": true,
+
+		/* Bundler mode */
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"moduleDetection": "force",
+		"strictNullChecks": false,
+		"noEmit": true,
+		"jsx": "preserve",
+
+		/* Linting */
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+
+		"allowJs": true, // 允许js
+		"noImplicitAny": false, // 不进行any语法检查
+
+		"baseUrl": ".",
+		"paths": {
+			"@/*": ["src/*"],
+			"utils/*": ["src/utils/*"]
+		}
+		// "types": ["vitest/globals"]
+	},
+	"vueCompilerOptions": {
+		"strictTemplates": false,
+		"plugins": ["@vue-macros/volar/define-props"]
+	},
+	"include": ["service/**/*.ts", "src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*.js"]
+}

@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, PropType, inject, shallowRef, onMounted } from " vue";
+import { defineComponent, PropType, inject, shallowRef, onMounted } from "vue";
 import { layerKey } from "../context";
 import { point } from "leaflet";
 import type { Content, TooltipOptions, Point, Direction } from "leaflet";

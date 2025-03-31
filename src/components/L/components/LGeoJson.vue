@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, inject, PropType, watch, toRefs } from " vue";
+import { defineComponent, inject, PropType, watch, toRefs } from "vue";
 import * as L from "leaflet";
 import { layerProps, layerSetup, layerEmits } from "../functions/layer";
 import { mapContextKey } from "../context";

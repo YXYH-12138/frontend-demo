@@ -8,7 +8,7 @@ import { transform3857 } from "@/utils/internal";
 import type { MapOptions } from "ol/Map";
 import type BaseLayer from "ol/layer/Base";
 
-const MAP_CENTER = [118.041628, 36.192841];
+export const MAP_CENTER = [122.8, 41.3];
 
 type BaseLayersItem = Record<string, BaseLayer>;
 type OlMapOptions = MapOptions & {

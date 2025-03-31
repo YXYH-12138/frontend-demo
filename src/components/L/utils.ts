@@ -1,4 +1,4 @@
-import { watch } from " vue";
+import { watch } from "vue";
 import { IconDefaultUrl } from "./type";
 
 const isPromise = (value: unknown) => value instanceof Promise;

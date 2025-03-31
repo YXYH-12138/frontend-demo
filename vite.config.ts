@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import { join, resolve } from "node:path";
 import vue from "@vitejs/plugin-vue";
 import VueJsx from "@vitejs/plugin-vue-jsx";
@@ -9,18 +9,22 @@ import { createStyleImportPlugin, VxeTableResolve } from "vite-plugin-style-impo
 import ElementPlus from "unplugin-element-plus/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 import UnoCSS from "unocss/vite";
+import cesium from "vite-plugin-cesium";
 
 // import { createVersion } from "./script/version-check/createVersion";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ command }) => {
-	// if (command === "build") {
-	// 	createVersion(resolve(__dirname, "./public"));
-	// }
+export default defineConfig(({ mode }) => {
+	const root = process.cwd();
+	// 加载环境配置
+	const ENV = loadEnv(mode, root);
+
+	const { VITE_MAP_API } = ENV;
 
 	return {
 		plugins: [
 			vue({ reactivityTransform: true }),
+			cesium(),
 			VueJsx(),
 			AutoImport({
 				resolvers: [ElementPlusResolver()],
@@ -51,9 +55,9 @@ export default defineConfig(({ command }) => {
 		server: {
 			host: true,
 			proxy: {
-				"/map": {
-					target: "http://gxpt.jxsl.gov.cn/arcgis/rest/services",
-					rewrite: (path) => path.replace("/map", "")
+				[VITE_MAP_API]: {
+					target: "http://10.21.0.139:9998",
+					rewrite: (path) => path.replace(VITE_MAP_API, "")
 				}
 			}
 		},

@@ -11,12 +11,7 @@ import { OlMapVue } from "@/utils/ol/map";
 import rrImg from "@/assets/img/水库.png";
 import ImageLayer from "ol/layer/Image";
 import { getTifSource } from "./tif";
-
-// 天地图token
-export const TIAN_TK = "4e663361fafe62c28e0c3dc115047428";
-
-// 天地图矢量服务地址
-export const TIAN_VEW_W = `http://t1.tianditu.com/DataServer?T=vec_w&tk=${TIAN_TK}&x={x}&y={y}&l={z}`;
+import { TIAN_VEW_W } from "@/constants";
 
 export class HomeMap extends OlMapVue {
 	sectionLayer?: Vector<Feature<LineString>>;
