@@ -2,6 +2,7 @@ import { VxeTable, VxeColumn, VxeColgroup, VxeGrid } from "vxe-table";
 import { VxeLoading, VxeTooltip, VxeModal, Icon, Print, VxeInput, VxeUI, Upload } from "vxe-pc-ui";
 import zhCN from "vxe-table/es/locale/lang/zh-CN";
 import "vxe-table/styles/cssvar.scss";
+import "vxe-pc-ui/styles/cssvar.scss";
 
 import VXETablePluginDataPaste from "./vxe-table-plugin-data-paste";
 import VXETablePluginXLSX from "./vxe-table-plugin-export-xlsx";

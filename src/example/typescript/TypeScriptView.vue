@@ -3,7 +3,10 @@ import { ref, watchEffect, type Ref } from "vue";
 import { getFy2Data } from "@/api/modules";
 import { sleep } from "@/utils";
 import { Message } from "@/components/VMessage";
+import { useTest } from "./useTest";
 
+const { foo } = useTest();
+foo();
 const a = ref(0);
 
 async function getData() {

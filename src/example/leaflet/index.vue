@@ -14,7 +14,7 @@
 				:options="{ style: { color: 'red' } }"
 			/> -->
 		</LMap>
-		<el-card class="checkbox">
+		<!-- <el-card class="checkbox">
 			<el-checkbox v-model="layerVisible.DD" label="雨量"></el-checkbox>
 			<el-checkbox v-model="layerVisible.RR" label="水库"></el-checkbox>
 			<el-checkbox v-model="layerVisible.geo" label="geojson"></el-checkbox>
@@ -24,7 +24,7 @@
 				</li>
 				<li @click="activeFly = 'pp'">rain</li>
 			</ul>
-		</el-card>
+		</el-card> -->
 	</div>
 </template>
 
@@ -34,6 +34,13 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { MAP_OPTIONS, TianDiTu_Normal, TIANDITU_OPTIONS } from "./constant";
 import { LMap, LTileLayer, LGeoJson } from "@/components/L";
+import {
+	tiledMapLayer,
+	imageMapLayer,
+	dynamicMapLayer,
+	type TiledMapLayerOptions
+} from "esri-leaflet";
+
 import type { Feature, MultiPolygon } from "geojson";
 // mock
 import staions from "@/assets/gis/staion.json";
@@ -73,15 +80,55 @@ const flyTo = (data: Record<string, any>) => {
 
 function init() {
 	const { map } = mapRef.value!;
-	L.tileLayer
-		.wms("http://localhost:9010/geoserver/base/wms", {
-			layers: "base:hunan_dike",
-			zIndex: 99,
-			transparent: true,
-			format: "image/png"
-			// srs: "EPSG:4326"
-		})
-		.addTo(map);
+
+	// L.tileLayer(
+	// 	"http://172.24.2.74:6080/arcgis/rest/services/LNMap_DOM_2023_2/MapServer/tile/{z}/{y}/{x}",
+	// 	{
+	// 		minZoom: 0,
+	// 		maxZoom: 19,
+	// 		tileSize: 256,
+	// 		attribution: "辽宁天地图"
+	// 		// bounds: L.latLngBounds(
+	// 		// 	[38.48296746130006, 117.99921713378512],
+	// 		// 	[43.728451522700084, 126.62598136221504]
+	// 		// )
+	// 	}
+	// ).addTo(map);
+
+	// 1. 获取当前地图视图的边界
+	const bounds = map.getBounds();
+
+	// 2. 获取边界的四个角
+	const northEast = bounds.getNorthEast();
+	const southWest = bounds.getSouthWest();
+	const northWest = bounds.getNorthWest();
+	const southEast = bounds.getSouthEast();
+
+	// 3. 定义多边形的顶点坐标
+	const polygonCoords = [
+		[northWest.lat, northWest.lng],
+		[northEast.lat, northEast.lng],
+		[southEast.lat, southEast.lng],
+		[southWest.lat, southWest.lng]
+	];
+
+	// 4. 创建一个多边形
+	const extentPolygon = L.polygon(polygonCoords).addTo(map);
+
+	// imageMapLayer({
+	// 	url: "/esriMap/OneMapServer/rest/services/LNMap_VEC_2021_BaseMap/MapServer",
+	// 	f: "image",
+	// 	format: "PNG32"
+	// }).addTo(map);
+	// L.tileLayer
+	// 	.wms("http://localhost:9010/geoserver/base/wms", {
+	// 		layers: "base:hunan_dike",
+	// 		zIndex: 99,
+	// 		transparent: true,
+	// 		format: "image/png"
+	// 		// srs: "EPSG:4326"
+	// 	})
+	// 	.addTo(map);
 	// const tileLayerUrl =
 	// 	"http://gxpt.jxsl.gov.cn/arcgis/rest/services/basemap/JXVectorBasemap/MapServer/tile/{z}/{y}/{x}?code=5597d0bd91b3b4519afdb316efd57dbce";
 	// L.tileLayer(tileLayerUrl).addTo(map!);
@@ -92,8 +139,6 @@ function init() {
 	// 	url: "http://gxpt.jxsl.gov.cn/arcgis/rest/services/basemap/JXVectorBasemap/MapServer/tile/{z}/{y}/{x}?code=5597d0bd91b3b4519afdb316efd57dbce"
 	// }).addTo(map);
 }
-
-onMounted(init);
 
 // import("@/mock/multi_polygon.json").then((data) => {
 // 	bounds.value = data.default as any;

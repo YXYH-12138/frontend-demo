@@ -58,6 +58,10 @@ export default defineConfig(({ mode }) => {
 				[VITE_MAP_API]: {
 					target: "http://10.21.0.139:9998",
 					rewrite: (path) => path.replace(VITE_MAP_API, "")
+				},
+				esriMap: {
+					target: "https://liaoning.tianditu.gov.cn",
+					rewrite: (path) => path.replace("esriMap", "")
 				}
 			}
 		},
@@ -76,10 +80,29 @@ export default defineConfig(({ mode }) => {
 						axios: ["axios"],
 						dayjs: ["dayjs"],
 						exceljs: ["exceljs"],
-						docxPreview: ["docx-preview"],
+						// docxPreview: ["docx-preview"],
 						elementPlus: ["element-plus"],
-						turf: ["@turf/turf"]
+						// turf: ["@turf/turf"],
+						leaflet: ["leaflet"],
+						vue: ["vue", "vue-router", "pinia"]
 					}
+					// manualChunks(id, { getModuleInfo }) {
+					// 	// console.log(id);
+					// 	if (id.includes("node_modules")) {
+					// 		// 提取包名（例如：/node_modules/lodash/... -> 'lodash'）
+					// 		const match = id.match(
+					// 			/[\\/]node_modules[\\/](\.pnpm[\\/].*?[\\/]node_modules[\\/])?(.*?)([\\/]|$)/
+					// 		);
+					// 		if (match) {
+					// 			const packageName = match[2];
+					// 			// 检查该模块是否被实际使用（避免空 chunk）
+					// 			const info = getModuleInfo(id);
+					// 			if (info && info.importers.length > 0) {
+					// 				return packageName;
+					// 			}
+					// 		}
+					// 	}
+					// }
 				}
 			},
 			// 启动 / 禁用 CSS 代码拆分

@@ -1,5 +1,5 @@
 // leaflet相关
-// import "proj4leaflet";
+import "proj4leaflet";
 
 // import "@geoman-io/leaflet-geoman-free";
 // import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";

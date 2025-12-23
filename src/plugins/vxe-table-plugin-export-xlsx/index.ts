@@ -6,7 +6,7 @@ import type {
 	VxeTableDefines,
 	VxeGlobalInterceptorHandles
 } from "vxe-table";
-import type ExcelJS from "exceljs";
+import ExcelJS from "exceljs";
 
 let globalVxetable: VxeUIExport;
 let globalExcelJS: any;
@@ -132,7 +132,7 @@ function getDefaultBorderStyle() {
 function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams) {
 	const msgKey = "xlsx";
 	const { modal, t } = globalVxetable;
-	const { $table, options, columns, colgroups, datas } = params;
+	const { $table, options, columns, colgroups, datas, $grid } = params;
 	const { props, reactData } = $table;
 	const { computeColumnOpts } = $table.getComputeMaps();
 	const { headerAlign: allHeaderAlign, align: allAlign, footerAlign: allFooterAlign } = props;
@@ -266,7 +266,7 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 		});
 	}
 	const exportMethod = () => {
-		const workbook: ExcelJS.Workbook = new (globalExcelJS || (window as any).ExcelJS).Workbook();
+		const workbook: ExcelJS.Workbook = new ExcelJS.Workbook();
 		const sheet = workbook.addWorksheet(sheetName);
 		workbook.creator = "vxe-table";
 		sheet.columns = sheetCols;
@@ -358,7 +358,8 @@ function exportXLSX(params: VxeGlobalInterceptorHandles.InterceptorExportParams)
 				columns,
 				colgroups,
 				datas,
-				$table
+				$table,
+				$grid
 			});
 		}
 		sheetMerges.forEach(({ s, e }) => {

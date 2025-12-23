@@ -4,13 +4,13 @@ import { cancelAll } from "@/utils/axios";
 export const routes: RouteRecordRaw[] = [
 	{
 		path: "/",
-		redirect: "/nginx"
+		redirect: "/vxe-table"
 	},
 	// {
 	// 	name: "leflet",
 	// 	path: "/leaflet",
 	// 	meta: { title: "leflet" },
-	// 	component: () => import("@/example/leaflet/index.vue")
+	// 	component: () => import(/* webpackChunkName: "LeafletView" */ "@/example/leaflet/index.vue")
 	// },
 	// {
 	// 	name: "leaflet-js",
@@ -22,7 +22,8 @@ export const routes: RouteRecordRaw[] = [
 	// 	name: "typescript",
 	// 	path: "/typescript",
 	// 	meta: { title: "typescript" },
-	// 	component: () => import("@/example/typescript/index.vue")
+	// 	component: () =>
+	// 		import(/* webpackChunkName: "TypeScriptView" */ "@/example/typescript/TypeScriptView.vue")
 	// },
 	// {
 	// 	name: "components",
@@ -37,24 +38,24 @@ export const routes: RouteRecordRaw[] = [
 	// 	component: () => import("@/example/info-scroll/index.vue")
 	// },
 
-	// {
-	// 	name: "meta2d",
-	// 	path: "/meta2d",
-	// 	meta: { title: "meta2d" },
-	// 	component: () => import("@/example/meta2d/index.vue")
-	// }
-	// {
-	// 	name: "vxe-table",
-	// 	path: "/vxe-table",
-	// 	meta: { title: "vxe-table" },
-	// 	component: () => import("@/example/vxe-table/index.vue")
-	// },
+	{
+		name: "meta2d",
+		path: "/meta2d",
+		meta: { title: "meta2d" },
+		component: () => import("@/example/meta2d/index.vue")
+	},
+	{
+		name: "vxe-table",
+		path: "/vxe-table",
+		meta: { title: "vxe-table" },
+		component: () => import("@/example/vxe-table/index.vue")
+	}
 	// {
 	// 	name: "ol",
 	// 	path: "/ol",
 	// 	meta: { title: "ol" },
 	// 	component: () => import("@/example/openlayer/index.vue")
-	// },
+	// }
 	// {
 	// 	name: "cesium",
 	// 	path: "/cesium",
@@ -85,12 +86,12 @@ export const routes: RouteRecordRaw[] = [
 	// 	meta: { title: "leaflet-freedraw" },
 	// 	component: () => import("@/example/leaflet-freedraw/index.vue")
 	// }
-	{
-		name: "nginx",
-		path: "/nginx",
-		meta: { title: "nginx" },
-		component: () => import("@/example/nginx/index.vue")
-	}
+	// {
+	// 	name: "nginx",
+	// 	path: "/nginx",
+	// 	meta: { title: "nginx" },
+	// 	component: () => import("@/example/nginx/index.vue")
+	// }
 ];
 
 const router = createRouter({

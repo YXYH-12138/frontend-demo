@@ -47,9 +47,6 @@ importers:
       element-plus:
         specifier: ^2.0.3
         version: 2.9.3(vue@3.4.38(typescript@4.9.5))
-      esri-leaflet:
-        specifier: ^3.0.12
-        version: 3.0.14(leaflet@1.9.4)
       exceljs:
         specifier: ^4.4.0
         version: 4.4.0
@@ -72,11 +69,11 @@ importers:
         specifier: ^3.0.0
         version: 3.0.1
       ol:
-        specifier: ^9.1.0
-        version: 9.2.4
+        specifier: ^10.6.1
+        version: 10.6.1
       ol-ext:
         specifier: ^4.0.24
-        version: 4.0.24(ol@9.2.4)
+        version: 4.0.24(ol@10.6.1)
       pinia:
         specifier: ^2.0.11
         version: 2.3.0(typescript@4.9.5)(vue@3.4.38(typescript@4.9.5))
@@ -102,11 +99,11 @@ importers:
         specifier: ^4.0.12
         version: 4.5.0(vue@3.4.38(typescript@4.9.5))
       vxe-pc-ui:
-        specifier: ^4.3.71
-        version: 4.3.71(vue@3.4.38(typescript@4.9.5))
+        specifier: ^4.7.16
+        version: 4.7.16(vue@3.4.38(typescript@4.9.5))
       vxe-table:
-        specifier: ^4.10.5
-        version: 4.10.5(vue@3.4.38(typescript@4.9.5))
+        specifier: ^4.14.4
+        version: 4.14.4(vue@3.4.38(typescript@4.9.5))
       xe-utils:
         specifier: ^3.7.0
         version: 3.7.0
@@ -168,6 +165,9 @@ importers:
       eslint-plugin-vue:
         specifier: ^8.6.0
         version: 8.7.1(eslint@8.57.1)
+      esri-leaflet:
+        specifier: ^3.0.14
+        version: 3.0.14(leaflet@1.9.4)
       fs-extra:
         specifier: ^11.2.0
         version: 11.2.0
@@ -1454,6 +1454,9 @@ packages:
   '@types/proj4leaflet@1.0.10':
     resolution: {integrity: sha512-Yie5J8sHUgTQ1FTRP9cCDXpWvHXjUiSjwlnJb1F06Czwo6cVOt8Bxy6txMSIVgznbnRWlbYmxNjWDhYtNxAflw==}
 
+  '@types/rbush@4.0.0':
+    resolution: {integrity: sha512-+N+2H39P8X+Hy1I5mC6awlTX54k3FhiUmvt7HWzGJZvF+syUAAxP/stwppS8JE84YHqFgRMv6fCy31202CMFxQ==}
+
   '@types/semver@7.5.8':
     resolution: {integrity: sha512-I8EUhyrgfLrcTkzV3TSsGyl1tSuPrEDzr0yd5m90UgNxQkyDXULk3b6MlQqTCpZpNtWe1K0hzclnZkTcLBe2UQ==}
 
@@ -1820,8 +1823,8 @@ packages:
   '@vueuse/shared@9.13.0':
     resolution: {integrity: sha512-UrnhU+Cnufu4S6JLCPZnkWh0WwZGUp72ktOF2DFptMlOs3TOdVv8xJN53zhHGARmVOsz5KqOls09+J1NR6sBKw==}
 
-  '@vxe-ui/core@4.0.29':
-    resolution: {integrity: sha512-F6ZJ7+x48qBDx7ME/GdmRN5OECha9wnNy0IIA8AAWHrjhTFY5yBBE+t2ULO6wgwkFB2E74CtYF/2/nprpGrdlA==}
+  '@vxe-ui/core@4.2.5':
+    resolution: {integrity: sha512-K/0ae1VoCaVHZTnV3rUFsQdkwCU6dKjbFVtf0bvVRCYG5v+KrKbvFBSkqdnGT7sDoeotPVjL/WjBbl64RpHs3w==}
     peerDependencies:
       vue: ^3.2.0
 
@@ -2087,19 +2090,6 @@ packages:
 
   color-name@1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
-
-  color-name@2.0.0:
-    resolution: {integrity: sha512-SbtvAMWvASO5TE2QP07jHBMXKafgdZz8Vrsrn96fiL+O92/FN/PLARzUW5sKt013fjAprK2d2iCn2hk2Xb5oow==}
-    engines: {node: '>=12.20'}
-
-  color-parse@2.0.2:
-    resolution: {integrity: sha512-eCtOz5w5ttWIUcaKLiktF+DxZO1R9KLNY/xhbV6CkhM7sR3GhVghmt6X6yOnzeaM24po+Z9/S1apbXMwA3Iepw==}
-
-  color-rgba@3.0.0:
-    resolution: {integrity: sha512-PPwZYkEY3M2THEHHV6Y95sGUie77S7X8v+h1r6LSAPF3/LL2xJ8duUXSrkic31Nzc4odPwHgUbiX/XuTYzQHQg==}
-
-  color-space@2.0.1:
-    resolution: {integrity: sha512-nKqUYlo0vZATVOFHY810BSYjmCARrG7e5R3UE3CQlyjJTvv5kSSmPG1kzm/oDyyqjehM+lW1RnEt9It9GNa5JA==}
 
   colorette@2.0.20:
     resolution: {integrity: sha512-IfEDxwoWIjkeXL1eXcDiow4UbKjhLdq6/EuSVR9GMN7KVH3r9gQ83e73hsz1Nd1T3ijd5xv1wcWRYO+D6kCI2w==}
@@ -3286,8 +3276,8 @@ packages:
     peerDependencies:
       ol: '>= 5.3.0'
 
-  ol@9.2.4:
-    resolution: {integrity: sha512-bsbu4ObaAlbELMIZWnYEvX4Z9jO+OyCBshtODhDKmqYTPEfnKOX3RieCr97tpJkqWTZvyV4tS9UQDvHoCdxS+A==}
+  ol@10.6.1:
+    resolution: {integrity: sha512-xp174YOwPeLj7c7/8TCIEHQ4d41tgTDDhdv6SqNdySsql5/MaFJEJkjlsYcvOPt7xA6vrum/QG4UdJ0iCGT1cg==}
 
   on-finished@2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
@@ -3373,8 +3363,8 @@ packages:
   pathe@2.0.1:
     resolution: {integrity: sha512-6jpjMpOth5S9ITVu5clZ7NOgHNsv5vRQdheL9ztp2vZmM6fRbLvyua1tiBIL4lk8SAe3ARzeXEly6siXCjDHDw==}
 
-  pbf@3.2.1:
-    resolution: {integrity: sha512-ClrV7pNOn7rtmoQVF4TS1vyU0WhYRnP92fzbfF75jAIwpnzdJXf8iTd4CMEqO4yUenH6NDqLiwjqlh6QgZzgLQ==}
+  pbf@4.0.1:
+    resolution: {integrity: sha512-SuLdBvS42z33m8ejRbInMapQe8n0D3vN/Xd5fmWM3tufNgRQFBpaW2YVJxQZV4iPNqb0vEFvssMEo5w9c6BTIA==}
     hasBin: true
 
   pend@1.2.0:
@@ -3536,6 +3526,9 @@ packages:
   quickselect@2.0.0:
     resolution: {integrity: sha512-RKJ22hX8mHe3Y6wH/N3wCM6BWtjaxIyyUIkpHOvfFnxdI4yD4tBXEBKSbriGujF6jnSVkJrffuo6vxACiSSxIw==}
 
+  quickselect@3.0.0:
+    resolution: {integrity: sha512-XdjUArbK4Bm5fLLvlm5KpTFOiOThgfWWI4axAZDWg4E/0mKdZyI9tNEfds27qCi1ze/vwTR16kvmmGhRra3c2g==}
+
   ramda@0.22.1:
     resolution: {integrity: sha512-koAvutfef1Lxo3xAWVrqf5dVcXmg5Hdh00thZUHzMrC+nFDTqcMwKTpus7aYNmKRCjapt0Lh928ynBal95Ap2Q==}
 
@@ -3548,6 +3541,9 @@ packages:
 
   rbush@3.0.1:
     resolution: {integrity: sha512-XRaVO0YecOpEuIvbhbpTrZgoiI6xBlz6hnlr6EHhd+0x9ase6EmeN+hdwwUaJvLcsFFQ8iWVF1GAK1yB0BWi0w==}
+
+  rbush@4.0.1:
+    resolution: {integrity: sha512-IP0UpfeWQujYC8Jg162rMNc01Rf0gWMMAb2Uxus/Q0qOFw4lCcq6ZnQEZwUoJqWyUGJ9th7JjwI4yIWo+uvoAQ==}
 
   rc@1.2.8:
     resolution: {integrity: sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==}
@@ -4203,11 +4199,11 @@ packages:
       typescript:
         optional: true
 
-  vxe-pc-ui@4.3.71:
-    resolution: {integrity: sha512-8of0TpraAC63/Y2SjMxzS7F0WMzDM0y0x1gQpBVIq2pPadh4x2bL9T6GsZdo4M/9+wMrC86BnekTUdJS8dajNg==}
+  vxe-pc-ui@4.7.16:
+    resolution: {integrity: sha512-t+E+x25FvRIax9HQJygO2wQA+2lxmNCkW4RY3m01c+bem4rs1FqM7UmxtUMBMM8OVH15mD42qwU4BtX7Ylf+EA==}
 
-  vxe-table@4.10.5:
-    resolution: {integrity: sha512-X04AwhfZLaBy1gSiCsVd0EPurIaFwOOna9XzojF0eUr2c6rYF8u9IrhP+vSBmOj+yDiAENf8QjXFyLgNU3NTTg==}
+  vxe-table@4.14.4:
+    resolution: {integrity: sha512-h4KDw8DHZz037kNULSJD2lEiNifAtHNw5XvXSH0Ropk60WK5My1zj9Kb2rX+uU1oGfh75dmv71JzR6V2iWoSUw==}
 
   web-worker@1.3.0:
     resolution: {integrity: sha512-BSR9wyRsy/KOValMgd5kMyr3JzpdeoR9KVId8u5GVlTTAtNChlsE4yTxeY7zMdNSyOmoKBv8NH2qeRY9Tg+IaA==}
@@ -4252,6 +4248,9 @@ packages:
 
   xe-utils@3.7.0:
     resolution: {integrity: sha512-2pndXCEivB7+xWCdCDth/LJ5ngAAstUOoHTGBQauwTqc03M3Cl1tYbNhPUqi4Lcj+UNZnnc8fANbFWjb6TMx6A==}
+
+  xe-utils@3.7.8:
+    resolution: {integrity: sha512-V/k6B/ASYir6yLYhp62DnM17po9u1N9mou/rn4if5WoFCsAO49JpCiVpkDpwCv4zxGfWmhWgzmz4FytWF+pDVw==}
 
   xml-utils@1.10.1:
     resolution: {integrity: sha512-Dn6vJ1Z9v1tepSjvnCpwk5QqwIPcEFKdgnjqfYOABv1ngSofuAhtlugcUC3ehS1OHdgDWSG6C5mvj+Qm15udTQ==}
@@ -6244,6 +6243,8 @@ snapshots:
       '@types/leaflet': 1.9.16
       '@types/proj4': 2.5.6
 
+  '@types/rbush@4.0.0': {}
+
   '@types/semver@7.5.8': {}
 
   '@types/trusted-types@2.0.7':
@@ -6778,11 +6779,11 @@ snapshots:
       - '@vue/composition-api'
       - vue
 
-  '@vxe-ui/core@4.0.29(vue@3.4.38(typescript@4.9.5))':
+  '@vxe-ui/core@4.2.5(vue@3.4.38(typescript@4.9.5))':
     dependencies:
       dom-zindex: 1.0.6
       vue: 3.4.38(typescript@4.9.5)
-      xe-utils: 3.7.0
+      xe-utils: 3.7.8
 
   '@zip.js/zip.js@2.7.54': {}
 
@@ -7077,19 +7078,6 @@ snapshots:
       color-name: 1.1.4
 
   color-name@1.1.4: {}
-
-  color-name@2.0.0: {}
-
-  color-parse@2.0.2:
-    dependencies:
-      color-name: 2.0.0
-
-  color-rgba@3.0.0:
-    dependencies:
-      color-parse: 2.0.2
-      color-space: 2.0.1
-
-  color-space@2.0.1: {}
 
   colorette@2.0.20: {}
 
@@ -8411,18 +8399,17 @@ snapshots:
       node-fetch-native: 1.6.4
       ufo: 1.5.4
 
-  ol-ext@4.0.24(ol@9.2.4):
+  ol-ext@4.0.24(ol@10.6.1):
     dependencies:
-      ol: 9.2.4
+      ol: 10.6.1
 
-  ol@9.2.4:
+  ol@10.6.1:
     dependencies:
-      color-rgba: 3.0.0
-      color-space: 2.0.1
-      earcut: 2.2.4
+      '@types/rbush': 4.0.0
+      earcut: 3.0.1
       geotiff: 2.1.3
-      pbf: 3.2.1
-      rbush: 3.0.1
+      pbf: 4.0.1
+      rbush: 4.0.1
 
   on-finished@2.4.1:
     dependencies:
@@ -8505,9 +8492,8 @@ snapshots:
 
   pathe@2.0.1: {}
 
-  pbf@3.2.1:
+  pbf@4.0.1:
     dependencies:
-      ieee754: 1.2.1
       resolve-protobuf-schema: 2.1.0
 
   pend@1.2.0:
@@ -8709,6 +8695,8 @@ snapshots:
 
   quickselect@2.0.0: {}
 
+  quickselect@3.0.0: {}
+
   ramda@0.22.1: {}
 
   range-parser@1.2.1: {}
@@ -8720,6 +8708,10 @@ snapshots:
   rbush@3.0.1:
     dependencies:
       quickselect: 2.0.0
+
+  rbush@4.0.1:
+    dependencies:
+      quickselect: 3.0.0
 
   rc@1.2.8:
     dependencies:
@@ -9521,15 +9513,15 @@ snapshots:
     optionalDependencies:
       typescript: 4.9.5
 
-  vxe-pc-ui@4.3.71(vue@3.4.38(typescript@4.9.5)):
+  vxe-pc-ui@4.7.16(vue@3.4.38(typescript@4.9.5)):
     dependencies:
-      '@vxe-ui/core': 4.0.29(vue@3.4.38(typescript@4.9.5))
+      '@vxe-ui/core': 4.2.5(vue@3.4.38(typescript@4.9.5))
     transitivePeerDependencies:
       - vue
 
-  vxe-table@4.10.5(vue@3.4.38(typescript@4.9.5)):
+  vxe-table@4.14.4(vue@3.4.38(typescript@4.9.5)):
     dependencies:
-      vxe-pc-ui: 4.3.71(vue@3.4.38(typescript@4.9.5))
+      vxe-pc-ui: 4.7.16(vue@3.4.38(typescript@4.9.5))
     transitivePeerDependencies:
       - vue
 
@@ -9563,6 +9555,8 @@ snapshots:
   ws@7.5.10: {}
 
   xe-utils@3.7.0: {}
+
+  xe-utils@3.7.8: {}
 
   xml-utils@1.10.1: {}
 

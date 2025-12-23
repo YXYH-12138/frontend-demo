@@ -4,21 +4,105 @@ import { LineString, Point } from "ol/geom";
 import { Tile, Vector } from "ol/layer";
 import { Translate } from "ol/interaction";
 import { onMounted } from "vue";
-import { XYZ, Vector as VectorSource } from "ol/source";
+import { XYZ, Vector as VectorSource, ImageTile } from "ol/source";
 import { transform3857 } from "@/utils";
 import secitonJson from "@/assets/gis/section.json";
-import { OlMapVue } from "@/utils/ol/map";
+import { MAP_CENTER, OlMapVue } from "@/utils/ol/map";
 import rrImg from "@/assets/img/水库.png";
-import ImageLayer from "ol/layer/Image";
 import { getTifSource } from "./tif";
 import { TIAN_VEW_W } from "@/constants";
+import TileArcGISRest from "ol/source/TileArcGISRest";
+import { TileGrid } from "ol/tilegrid";
+import { get as getProjection } from "ol/proj";
+import proj4 from "proj4";
+import { register } from "ol/proj/proj4";
+import { getTopLeft } from "ol/extent";
+import { View } from "ol";
+
+proj4.defs("EPSG:4490", "+proj=longlat +datum=CGCS2000 +no_defs");
+register(proj4);
+
+const resolutions = [
+	1.4078260157100582, 0.703125, 0.3515625, 0.17578125, 0.087890625, 0.0439453125, 0.02197265625,
+	0.010986328125, 0.0054931640625, 0.00274658203125, 0.001373291015625, 6.866455078125e-4,
+	3.4332275390625e-4, 1.71661376953125e-4, 8.58306884765625e-5, 4.291534423828125e-5,
+	2.1457672119140625e-5, 1.0728836059570312e-5, 5.364418029785156e-6, 2.6822090143215496e-6
+];
 
 export class HomeMap extends OlMapVue {
-	sectionLayer?: Vector<Feature<LineString>>;
-
 	constructor() {
+		// const projection = getProjection("EPSG:4490")!;
+		// projection.setExtent([
+		// 	118.30665226055264, 38.357821600000065, 126.31854674044753, 43.73441040000007
+		// ]);
+		// const projectionExtent = projection.getExtent();
+
+		// console.log(projection);
+
 		super({
-			layers: [new Tile({ source: new XYZ({ url: TIAN_VEW_W }) })]
+			// view: new View({
+			// 	center: MAP_CENTER,
+			// 	projection: "EPSG:4490",
+			// 	zoom: 7.6
+			// 	// minZoom: 7.2
+			// 	// constrainResolution: true
+			// 	// maxZoom: 12
+			// }),
+			layers: [
+				// new Tile({
+				// 	source: new TileArcGISRest({
+				// 		params: {
+				// 			// TRANSPARENT: false,
+				// 			// layers: "sheng:0" // 显示sheng图层(索引0)
+				// 		},
+				// 		// projection: "EPSG:4490", // 使用服务指定的空间参考
+				// 		wrapX: false,
+				// 		url: "http://172.24.2.74:6080/arcgis/rest/services/LNMap_VEC_2023_BaseMap/MapServer",
+				// 		tileGrid: new TileGrid({
+				// 			extent: [
+				// 				118.30665226055264, 38.357821600000065, 126.31854674044753, 43.73441040000007
+				// 			],
+				// 			origin: [-180, -90, 180, 90], // 与服务的Origin一致
+				// 			resolutions: [
+				// 				1.4078260157100582, // Level 0
+				// 				0.7031250000000001, // Level 1
+				// 				0.35156250000000006, // Level 2
+				// 				0.17578125000000122, // Level 3
+				// 				0.08789062500000061, // Level 4
+				// 				0.043945312500000305, // Level 5
+				// 				0.021972656250000153, // Level 6
+				// 				0.010986328125000076, // Level 7
+				// 				0.005493164062498848, // Level 8
+				// 				0.002746582031250614, // Level 9
+				// 				0.001373291015625307, // Level 10
+				// 				6.866455078114638e-4, // Level 11
+				// 				3.433227539069216e-4, // Level 12
+				// 				1.7166137695227108e-4, // Level 13
+				// 				8.583068847732526e-5, // Level 14
+				// 				4.291534423866263e-5, // Level 15
+				// 				2.1457672119331316e-5, // Level 16
+				// 				1.0728836059665658e-5, // Level 17
+				// 				5.364418028643099e-6, // Level 18
+				// 				2.6822090143215496e-6 // Level 19
+				// 			]
+				// 			// tileSize: [256, 256] // 与服务的Tile Info一致
+				// 		})
+				// 	})
+				// })
+				new Tile({
+					zIndex: 9,
+					source: new XYZ({
+						projection: "EPSG:4490",
+						url: "http://172.24.2.74:6080/arcgis/rest/services/LNMap_DOM_2023_2/MapServer/tile/{z}/{y}/{x}",
+						tileGrid: new TileGrid({
+							resolutions,
+							// matrixIds: resolutions.map((_, i) => i.toString()),
+							origin: [-180, 90]
+						})
+					})
+				})
+			]
+			// layers: [new Tile({ source: new XYZ({ url: TIAN_VEW_W }) })]
 		});
 	}
 
