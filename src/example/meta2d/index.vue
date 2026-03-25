@@ -18,7 +18,8 @@ import DragTools from "./topology/DragTools.vue";
 import ConfigPane from "./topology/ConfigPane/index.vue";
 import { TopologyNodeType } from "@/constants";
 import { createTopology } from "@/utils";
-import { LockState } from "@meta2d/core";
+import { LockState, deepClone } from "@meta2d/core";
+import { parseSvg } from "@meta2d/svg";
 import data from "./data.json";
 
 // 创建概化图
@@ -29,15 +30,23 @@ const { TopologyComponent, meta2d, pen } = topology;
 async function initTopology() {
 	const [meta2d] = await Promise.all([topology.promise]);
 	meta2d.clear();
+	const svgData = await import("./矩形 1.svg?raw");
+	// console.log(svgData.default);
+	const pens = parseSvg(svgData.default);
+	// 可使用 dragStart or meta2d.canvas.addCaches
+	meta2d.canvas.addCaches = deepClone(pens);
+	// 画布居中
+	meta2d.centerView();
+	meta2d.scale(0.8);
 	if (data && data.json) {
-		const lines = JSON.parse(data.json);
+		// const lines = JSON.parse(data.json);
 		// 隐藏计算信息节点
-		for (const pen of lines.pens) {
-			if (pen.nodeType === TopologyNodeType.CalcInfo) {
-				pen.visible = false;
-				pen.locked = LockState.Disable;
-			}
-		}
+		// for (const pen of lines.pens) {
+		// 	if (pen.nodeType === TopologyNodeType.CalcInfo) {
+		// 		pen.visible = false;
+		// 		pen.locked = LockState.Disable;
+		// 	}
+		// }
 		// const _pens = lines.pens.filter((o: Required<IStationNodeConfig>) => o.type !== PenType.Line);
 		// pens.value = _pens;
 		// riverStations.value = pens.value
@@ -46,8 +55,8 @@ async function initTopology() {
 		// 	.filter(Boolean) as StationRaw[];
 		// console.log(lines);
 		// 加载数据
-		meta2d.open(lines);
-		meta2d.scale(0.8);
+		// meta2d.open(lines);
+		// meta2d.scale(0.8);
 		// 画布居中
 		// meta2d.centerView();
 		// meta2d.lock(LockState.DisableEdit);

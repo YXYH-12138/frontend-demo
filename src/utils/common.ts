@@ -1,8 +1,17 @@
-import { isObject, isString } from "lodash-es";
+import { isObject, isString, isArray } from "lodash-es";
 
-const hasOwnProperty = Object.prototype.hasOwnProperty;
-export const hasOwn = (val: object, key: string | symbol): key is keyof typeof val =>
-	val && hasOwnProperty.call(val, key);
+export function isEmptyValue(value: any) {
+	return value == null || value === "";
+}
+
+export function uuid() {
+	// 生成一个符合UUID v4标准的随机字符串
+	return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+		const r = (Math.random() * 16) | 0,
+			v = c == "x" ? r : (r & 0x3) | 0x8;
+		return v.toString(16);
+	});
+}
 
 /**
  * 获取错误信息
@@ -20,15 +29,31 @@ export function getError(error: any, defaultError = "错误") {
 
 /**
  * 是否是一个Number类型，如果字符串也会转为Number判断
+ *  NaN, Infinity, -Infinity 都不算数值类型
  * @param val
  * @returns
  */
 export function isNumber(val: any): val is number {
 	if (typeof val === "number" || (typeof val === "string" && val.length > 0)) {
 		const _val = Number(val);
-		return !Number.isNaN(_val);
+		return !Number.isNaN(_val) && _val !== Infinity && _val !== -Infinity;
 	}
 	return false;
+}
+
+/**
+ * @description 判断是否为有效数值
+ * @param value
+ * @returns {boolean}
+ */
+export function isEffectiveValue(value: any) {
+	return (
+		!Number.isNaN(Number(value)) &&
+		typeof value !== "boolean" &&
+		!isArray(value) &&
+		value !== "" &&
+		value !== null
+	);
 }
 
 /**
@@ -47,16 +72,19 @@ export function toNumber(val: any, defaultStr = "") {
  * @param fractionDigits 保留的小数
  * @param defaultStr 转换失败时返回的默认字符
  * @param strict 严格模式下0也返回defaultStr
+ * @param ignoreTrailingZeros 去除末尾无意义的‘0’
  * @returns
  */
 export function parseNumber(
 	num: string | number | undefined | null,
 	fractionDigits?: number,
 	defaultStr = "",
-	strict = false
-): string {
+	strict = false,
+	ignoreTrailingZeros = false
+): string | number {
 	if (!isNumber(num)) return defaultStr;
 	if (strict && num == 0) return defaultStr;
+	if (ignoreTrailingZeros) return Number(Number(num).toFixed(fractionDigits));
 	return Number(num).toFixed(fractionDigits);
 }
 
@@ -85,34 +113,44 @@ export function parseJson<T = any>(json: string): Promise<T> {
 	}
 }
 
-/** 格式化数组 */
-export function fixedArray(data: number[], fractionDigits: number) {
-	return data.map((value) => toFixed(value, fractionDigits));
+/**
+ * 将数组转化为对象
+ * @param data
+ * @param keyField
+ * @param valueField
+ * @returns
+ */
+export function arrayToObject<T extends Record<string, any>, K extends keyof T>(
+	data: T[],
+	keyField: K,
+	valueField: K
+) {
+	return data.reduce((obj, item) => {
+		obj[item[keyField]] = item[valueField];
+		return obj;
+	}, {} as Record<T[K], T[K]>);
 }
 
 /**
- * 对象数组转化为一维数组
- * @param data 需要转化的数据
- * @param keys 数组对象中的key
- * @example
- * { Z: "1", Q: "4" },
- * { Z: "2", Q: "5" },
- * =>
- * [[1,2],[4,5]]
+ * 将数组转化为对象
+ * @param data
+ * @param keyField
+ * @param valueField
  * @returns
  */
-export function transformArray<T extends Record<string, any>, K extends keyof T>(
+export function arrayToObjectValue<T extends Record<string, any>, K extends keyof T>(
 	data: T[],
-	keys: K[],
-	format?: any
+	keyField: K
 ) {
-	const result: Array<any[]> = [];
-	data.forEach((row) => {
-		keys.forEach((key, i) => {
-			(result[i] || (result[i] = [])).push(format ? format(row[key]) : row[key]);
-		});
-	});
-	return result;
+	return data.reduce((obj, item) => {
+		obj[item[keyField]] = item;
+		return obj;
+	}, {} as Record<T[K], T>);
+}
+
+/** 格式化数组 */
+export function fixedArray(data: number[], fractionDigits: number) {
+	return data.map((value) => toFixed(value, fractionDigits));
 }
 
 /**
@@ -154,7 +192,7 @@ export function stringToArray(text: string) {
  * @returns
  */
 export function parseMultipleString<T = any>(input: Record<string, string>) {
-	const spReg = /,|\s/;
+	const spReg = /,|，|\s/;
 	const keys = Object.keys(input);
 	const arrays: string[][] = [];
 	const keyMap: string[] = [];
@@ -188,6 +226,10 @@ export function withResolvers<T = any>() {
 	});
 
 	return { promise, resolve, reject };
+}
+
+export function nextMacroTask() {
+	return new Promise((resolve) => setTimeout(resolve, 0));
 }
 
 /**
@@ -233,6 +275,7 @@ export function download(data: Blob | string, filename: string) {
 	const a = document.createElement("a");
 	a.href = url;
 	a.download = filename;
+	a.target = "_blank"; // 可选，新标签页打开
 	a.click();
 	isBolb && window.URL.revokeObjectURL(url);
 }
@@ -543,6 +586,7 @@ export function randomColor() {
 	}
 	return color;
 }
+
 /**
  * 将文件转为ArrayBuffer
  * @param file
@@ -561,4 +605,115 @@ export function fileToArrayBuffer(file: File): Promise<ArrayBuffer> {
 		};
 		reader.readAsArrayBuffer(file);
 	});
+}
+
+// 将二进制数据转换为Buffer,在转换为GeoJSON数据
+export function blobTransferBuffer(param: Blob) {
+	let data: null | ArrayBuffer | string = null;
+	const blob = new Blob([param as unknown as any]);
+	const fileReader = new FileReader();
+	fileReader.readAsArrayBuffer(blob);
+	return new Promise((resolve, reject) => {
+		fileReader.onload = function () {
+			data = this.result;
+			const decoder = new TextDecoder("utf-8");
+			const utf8String = decoder.decode(data as ArrayBuffer);
+			try {
+				resolve(JSON.parse(utf8String));
+			} catch (error) {
+				reject(error);
+			}
+		};
+	});
+}
+
+// 监听粘贴处理
+export function pasteHandler(event: ClipboardEvent) {
+	return new Promise((resolve) => {
+		// 防止默认行为
+		event.preventDefault();
+		// 使用事件对象的clipboardData对象获取剪切板数据
+		const clipboardData = event.clipboardData || (window as any).clipboardData || {};
+		const { types, files } = clipboardData;
+		if (types?.length) {
+			if (types.includes("text/plain")) {
+				const textValue = clipboardData.getData?.("Text");
+				resolve(textValue);
+			} else if (types.includes("Files") && files?.length) {
+				const reader = new FileReader();
+				// 文件读取成功完成后的处理 在这里使用base64String，例如可以将其设置为图片的src
+				reader.onload = (e: any) => resolve(e.target.result);
+				// 以DataURL的形式读取文件
+				reader.readAsDataURL(files[0]);
+			} else resolve(undefined);
+		} else resolve(undefined);
+	});
+}
+
+/**
+ * 移除表格数据
+ * @param dataSource 原始数据
+ * @param records 需要移除的记录
+ * @param compare 比较函数
+ * @returns
+ */
+export function removeTableDataByRecords<T, R = T>(
+	dataSource: T[],
+	records: R[],
+	compare: (dataSource: T, record: R) => boolean
+) {
+	const len = dataSource.length;
+
+	const result: T[] = [];
+
+	const list = [...records];
+	let rLen = list.length;
+
+	for (let i = 0; i < len; i++) {
+		const item = dataSource[i];
+		let isRemove = false;
+		for (let j = 0; j < rLen; j++) {
+			const record = list[j];
+			if (compare(item, record)) {
+				isRemove = true;
+				rLen--;
+				list.splice(j, 1);
+				break;
+			}
+		}
+		if (!isRemove) {
+			result.push(item);
+		}
+	}
+	return result;
+}
+
+export function hexToRgb(hex) {
+	// 确保输入是一个有效的十六进制颜色代码
+	hex = (hex || "").replace(/^#/, "");
+
+	// 如果长度是3，将其转换为6（例如：#f00 -> #ff0000）
+	if (hex.length === 3) {
+		hex = hex
+			.split("")
+			.map((x) => x + x)
+			.join("");
+	}
+
+	// 解析十六进制为十进制并返回 RGB 对象
+	const bigint = parseInt(hex, 16);
+	const r = (bigint >> 16) & 255;
+	const g = (bigint >> 8) & 255;
+	const b = bigint & 255;
+
+	// 你可以返回一个对象或一个字符串
+	// 返回对象
+	return {
+		r: r,
+		g: g,
+		b: b
+	};
+
+	// 或者返回一个字符串（例如："rgb(255, 0, 0)"）
+	// return `rgb(${r}, ${g}, ${b})`;
 }

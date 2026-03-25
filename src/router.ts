@@ -4,7 +4,7 @@ import { cancelAll } from "@/utils/axios";
 export const routes: RouteRecordRaw[] = [
 	{
 		path: "/",
-		redirect: "/vxe-table"
+		redirect: "/ol"
 	},
 	// {
 	// 	name: "leflet",
@@ -44,18 +44,18 @@ export const routes: RouteRecordRaw[] = [
 		meta: { title: "meta2d" },
 		component: () => import("@/example/meta2d/index.vue")
 	},
-	{
-		name: "vxe-table",
-		path: "/vxe-table",
-		meta: { title: "vxe-table" },
-		component: () => import("@/example/vxe-table/index.vue")
-	}
 	// {
-	// 	name: "ol",
-	// 	path: "/ol",
-	// 	meta: { title: "ol" },
-	// 	component: () => import("@/example/openlayer/index.vue")
-	// }
+	// 	name: "vxe-table",
+	// 	path: "/vxe-table",
+	// 	meta: { title: "vxe-table" },
+	// 	component: () => import("@/example/vxe-table/index.vue")
+	// },
+	{
+		name: "ol",
+		path: "/ol",
+		meta: { title: "ol" },
+		component: () => import("@/example/openlayer/index.vue")
+	}
 	// {
 	// 	name: "cesium",
 	// 	path: "/cesium",

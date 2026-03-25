@@ -4,6 +4,7 @@ import router from "./router";
 import "virtual:uno.css";
 
 // css
+import "./theme/index.scss";
 import "./assets/css/reset.css";
 // plugin
 import plugins from "./plugins";
