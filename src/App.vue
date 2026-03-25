@@ -37,22 +37,22 @@ const menus = { path: "/", children: routes.slice(1) };
 </script>
 
 <template>
-  <el-container style="height: 100%">
-    <el-aside width="200px">
-      <MenuList :menus="menus" router />
-    </el-aside>
-    <el-main class="position-relative">
-      <router-view></router-view>
-    </el-main>
-  </el-container>
+	<el-container style="height: 100%">
+		<el-aside width="200px">
+			<MenuList :menus="menus" router />
+		</el-aside>
+		<el-main class="position-relative">
+			<router-view></router-view>
+		</el-main>
+	</el-container>
 </template>
 
 <style>
 #app {
-  width: 100%;
-  height: 100%;
+	width: 100%;
+	height: 100%;
 }
 .el-main {
-  padding: 0;
+	padding: 0;
 }
 </style>

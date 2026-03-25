@@ -85,7 +85,7 @@ export default defineConfig(({ mode }) => {
 						// turf: ["@turf/turf"],
 						leaflet: ["leaflet"],
 						vue: ["vue", "vue-router", "pinia"]
-					}
+					} as any
 					// manualChunks(id, { getModuleInfo }) {
 					// 	// console.log(id);
 					// 	if (id.includes("node_modules")) {
@@ -114,3 +114,4 @@ export default defineConfig(({ mode }) => {
 		}
 	};
 });
+
