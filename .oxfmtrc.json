@@ -14,6 +14,5 @@
 	"endOfLine": "crlf",
 	// 没有尾随逗号
 	"trailingComma": "none",
-	"ignorePatterns": ["./node_modules"]
+	"ignorePatterns": ["./node_modules", "./public/geojson"]
 }
-
