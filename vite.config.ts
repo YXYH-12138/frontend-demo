@@ -5,112 +5,172 @@ import VueJsx from "@vitejs/plugin-vue-jsx";
 import AutoImport from "unplugin-auto-import/vite";
 import Components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
-import { createStyleImportPlugin, VxeTableResolve } from "vite-plugin-style-import";
+import {
+  createStyleImportPlugin,
+  VxeTableResolve,
+} from "vite-plugin-style-import";
 import ElementPlus from "unplugin-element-plus/vite";
 import { visualizer } from "rollup-plugin-visualizer";
 import UnoCSS from "unocss/vite";
-import cesium from "vite-plugin-cesium";
+// import cesium from "vite-plugin-cesium";
 
 // import { createVersion } from "./script/version-check/createVersion";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-	const root = process.cwd();
-	// 加载环境配置
-	const ENV = loadEnv(mode, root);
+  const root = process.cwd();
+  // 加载环境配置
+  const ENV = loadEnv(mode, root);
 
-	const { VITE_MAP_API } = ENV;
+  const { VITE_MAP_API } = ENV;
 
-	return {
-		plugins: [
-			vue({ reactivityTransform: true }),
-			cesium(),
-			VueJsx(),
-			AutoImport({
-				resolvers: [ElementPlusResolver()],
-				dts: resolve(__dirname, "./src/typings/auto-imports.d.ts")
-			}),
-			Components({
-				resolvers: [ElementPlusResolver({ importStyle: "sass" })],
-				dts: resolve(__dirname, "./src/typings/components.d.ts")
-			}),
-			ElementPlus({ useSource: true }),
-			UnoCSS(),
-			createStyleImportPlugin({
-				resolves: [VxeTableResolve()]
-			}),
-			visualizer({
-				// 将分析文件放在打包目录下
-				emitFile: true,
-				//如果存在本地服务端口，将在打包后自动展示
-				open: true
-			})
-		],
-		resolve: {
-			alias: {
-				"@": resolve(__dirname, "./src")
-			}
-		},
+  return {
+    plugins: [
+      vue({ reactivityTransform: true }),
+      // cesium(),
+      VueJsx(),
+      AutoImport({
+        resolvers: [ElementPlusResolver()],
+        dts: resolve(__dirname, "./src/typings/auto-imports.d.ts"),
+      }),
+      Components({
+        resolvers: [ElementPlusResolver({ importStyle: "sass" })],
+        dts: resolve(__dirname, "./src/typings/components.d.ts"),
+      }),
+      ElementPlus({ useSource: true }),
+      UnoCSS(),
+      createStyleImportPlugin({
+        resolves: [VxeTableResolve()],
+      }),
+      visualizer({
+        // 将分析文件放在打包目录下
+        emitFile: true,
+        //如果存在本地服务端口，将在打包后自动展示
+        open: true,
+      }),
+    ],
+    resolve: {
+      alias: {
+        "@": resolve(__dirname, "./src"),
+      },
+    },
 
-		server: {
-			host: true,
-			proxy: {
-				[VITE_MAP_API]: {
-					target: "http://10.21.0.139:9998",
-					rewrite: (path) => path.replace(VITE_MAP_API, "")
-				},
-				esriMap: {
-					target: "https://liaoning.tianditu.gov.cn",
-					rewrite: (path) => path.replace("esriMap", "")
-				}
-			}
-		},
+    server: {
+      host: true,
+      proxy: {
+        [VITE_MAP_API]: {
+          target: "http://10.21.0.139:9998",
+          rewrite: (path) => path.replace(VITE_MAP_API, ""),
+        },
+        esriMap: {
+          target: "https://liaoning.tianditu.gov.cn",
+          rewrite: (path) => path.replace("esriMap", ""),
+        },
+      },
+    },
 
-		build: {
-			minify: "esbuild",
-			outDir: join("./dist"),
-			emptyOutDir: true,
-			rollupOptions: {
-				output: {
-					chunkFileNames: "static/js/[name]-[hash].js",
-					entryFileNames: "static/js/[name]-[hash].js",
-					assetFileNames: "static/[ext]/[name]-[hash].[ext]",
-					manualChunks: {
-						vxeTable: ["vxe-table"],
-						axios: ["axios"],
-						dayjs: ["dayjs"],
-						exceljs: ["exceljs"],
-						// docxPreview: ["docx-preview"],
-						elementPlus: ["element-plus"],
-						// turf: ["@turf/turf"],
-						leaflet: ["leaflet"],
-						vue: ["vue", "vue-router", "pinia"]
-					} as any
-					// manualChunks(id, { getModuleInfo }) {
-					// 	// console.log(id);
-					// 	if (id.includes("node_modules")) {
-					// 		// 提取包名（例如：/node_modules/lodash/... -> 'lodash'）
-					// 		const match = id.match(
-					// 			/[\\/]node_modules[\\/](\.pnpm[\\/].*?[\\/]node_modules[\\/])?(.*?)([\\/]|$)/
-					// 		);
-					// 		if (match) {
-					// 			const packageName = match[2];
-					// 			// 检查该模块是否被实际使用（避免空 chunk）
-					// 			const info = getModuleInfo(id);
-					// 			if (info && info.importers.length > 0) {
-					// 				return packageName;
-					// 			}
-					// 		}
-					// 	}
-					// }
-				}
-			},
-			// 启动 / 禁用 CSS 代码拆分
-			cssCodeSplit: true,
-			// 禁用 gzip 压缩大小报告。
-			reportCompressedSize: true,
-			// 构建后是否生成 soutrce map 文件
-			sourcemap: false
-		}
-	};
+    build: {
+      outDir: join("./dist"),
+      emptyOutDir: true,
+      // 块大小警告限制（以 kB 为单位）
+      chunkSizeWarningLimit: 1000,
+      // 启动 / 禁用 CSS 代码拆分
+      cssCodeSplit: true,
+      // 禁用 gzip 压缩大小报告。
+      reportCompressedSize: false,
+      // 构建后是否生成 soutrce map 文件
+      sourcemap: false,
+      rolldownOptions: {
+        output: {
+          chunkFileNames: "static/js/[name]-[hash].js",
+          entryFileNames: "static/js/[name]-[hash].js",
+          assetFileNames: "static/[ext]/[name]-[hash].[ext]",
+          codeSplitting: {
+            groups: [
+              {
+                name: "vue-vender",
+                test: /node_modules[\\/](vue|vue-router|pinia|@vueuse)/,
+                priority: 20,
+              },
+              {
+                name: "vxe-vender",
+                test: /node_modules[\\/]vxe/,
+                priority: 20,
+              },
+              {
+                name: "ui-vender",
+                test: /node_modules[\\/]element-plus/,
+                priority: 20,
+              },
+              {
+                name: "map-vender",
+                test: /node_modules[\\/](cesium|proj4leaflet|leaflet|ol|ol-ext|proj4)/,
+                priority: 20,
+              },
+              {
+                name: "utils-vender",
+                test: /node_modules[\\/](axios|dayjs|lodash-es|xe-utils)/,
+                priority: 20,
+              },
+              {
+                name: "meta2d-vender",
+                test: /node_modules[\\/](@meta2d)/,
+                priority: 20,
+              },
+              {
+                name: "exceljs-vender",
+                test: /node_modules[\\/](exceljs)/,
+                priority: 20,
+              },
+              {
+                name: "echarts-vender",
+                test: /node_modules[\\/]echarts/,
+                priority: 20,
+              },
+              {
+                name: "vendor",
+                test: /node_modules/,
+                priority: 10,
+                minSize: 10000,
+              },
+              {
+                name: "common",
+                minShareCount: 2,
+                minSize: 10000,
+                priority: 5,
+              },
+            ],
+          },
+          // manualChunks: {
+          //   vxeTable: ["vxe-table"],
+          //   axios: ["axios"],
+          //   dayjs: ["dayjs"],
+          //   exceljs: ["exceljs"],
+          //   // docxPreview: ["docx-preview"],
+          //   elementPlus: ["element-plus"],
+          //   // turf: ["@turf/turf"],
+          //   leaflet: ["leaflet"],
+          //   vue: ["vue", "vue-router", "pinia"],
+          // },
+          // manualChunks(id, { getModuleInfo }) {
+          // 	// console.log(id);
+          // 	if (id.includes("node_modules")) {
+          // 		// 提取包名（例如：/node_modules/lodash/... -> 'lodash'）
+          // 		const match = id.match(
+          // 			/[\\/]node_modules[\\/](\.pnpm[\\/].*?[\\/]node_modules[\\/])?(.*?)([\\/]|$)/
+          // 		);
+          // 		if (match) {
+          // 			const packageName = match[2];
+          // 			// 检查该模块是否被实际使用（避免空 chunk）
+          // 			const info = getModuleInfo(id);
+          // 			if (info && info.importers.length > 0) {
+          // 				return packageName;
+          // 			}
+          // 		}
+          // 	}
+          // }
+        },
+      },
+    },
+  };
 });

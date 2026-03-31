@@ -1,7 +1,8 @@
 @use "./ol.scss";
 
 body {
-	font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,
+	font-family:
+		"Helvetica Neue", Helvetica, "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial,
 		sans-serif;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -246,24 +247,24 @@ body {
 	}
 }
 
-.public-aa-header-title {
-	background: url("@/assets/images/auxiliary-analysis/title-bg.png") no-repeat center;
-	&.dark {
-		background-image: url("@/assets/images/auxiliary-analysis/title-bg-dark.png");
-		background-size: 100% 100%;
-	}
-	&.size-six {
-		background-image: url("@/assets/images/auxiliary-analysis/title-bg-size-six.png");
-		background-size: 100% 100%;
-	}
-	&.size-eleven {
-		background-image: url("@/assets/images/auxiliary-analysis/title-bg-size-eleven.png");
-		background-size: 100% 100%;
-	}
-	.public-aa-header-dot {
-		background: url("@/assets/images/auxiliary-analysis/title-dot.png") no-repeat center;
-	}
-}
+// .public-aa-header-title {
+// 	background: url("@/assets/images/auxiliary-analysis/title-bg.png") no-repeat center;
+// 	&.dark {
+// 		background-image: url("@/assets/images/auxiliary-analysis/title-bg-dark.png");
+// 		background-size: 100% 100%;
+// 	}
+// 	&.size-six {
+// 		background-image: url("@/assets/images/auxiliary-analysis/title-bg-size-six.png");
+// 		background-size: 100% 100%;
+// 	}
+// 	&.size-eleven {
+// 		background-image: url("@/assets/images/auxiliary-analysis/title-bg-size-eleven.png");
+// 		background-size: 100% 100%;
+// 	}
+// 	.public-aa-header-dot {
+// 		background: url("@/assets/images/auxiliary-analysis/title-dot.png") no-repeat center;
+// 	}
+// }
 
 .public-station-info-popup {
 	.mars3d-popup-background {

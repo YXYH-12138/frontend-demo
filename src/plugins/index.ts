@@ -15,10 +15,12 @@ import "proj4leaflet";
 import VxeTable from "./vxe";
 import type { App } from "vue";
 
+export * from "./echarts";
+
 /**
  * 加载所有的plugin
  * @param app 整个应用的实例
  */
 export default function (app: App): void {
-	app.use(VxeTable);
+  app.use(VxeTable);
 }
