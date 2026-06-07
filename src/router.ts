@@ -31,8 +31,13 @@ const exampleRouter: RouteRecordRaw[] = [
 export const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    redirect: "/render",
+    redirect: "/fabric",
   },
+  // {
+  //   path: "/fabric",
+  //   meta: { title: "fabric" },
+  //   component: () => import("@/example/fabric/index.vue"),
+  // },
   // {
   // 	name: "leflet",
   // 	path: "/leaflet",
@@ -77,12 +82,12 @@ export const routes: RouteRecordRaw[] = [
   // 	meta: { title: "vxe-table" },
   // 	component: () => import("@/example/vxe-table/index.vue")
   // },
-  // {
-  //   name: "ol",
-  //   path: "/ol",
-  //   meta: { title: "ol" },
-  //   component: () => import("@/example/openlayer/index.vue"),
-  // },
+  {
+    name: "ol",
+    path: "/ol",
+    meta: { title: "ol" },
+    component: () => import("@/example/openlayer/index.vue"),
+  },
   // {
   // 	name: "cesium",
   // 	path: "/cesium",

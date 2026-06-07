@@ -30,6 +30,6 @@ export class Evented<T extends Record<EventType, any>> {
   }
 
   public emit<Key extends keyof T>(type: Key, event?: T[Key]) {
-    this.emitter && this.emitter.emit(type, event as T[Key]);
+    if (this.emitter) this.emitter.emit(type, event as T[Key]);
   }
 }
